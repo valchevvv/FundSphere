@@ -1,27 +1,27 @@
 import { Address } from "viem";
-import { abi as COMPAIGN_ABI } from "../abi/Compaign.json";
+import { abi as CAMPAIGN_ABI } from "../abi/Compaign.json";
 import { abi as FACTORY_ABI } from "../abi/CompaignFactory.json";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { ethers } from "ethers";
 
 const FACTORY_CONTRACT_ADDRESS = import.meta.env.VITE_WC_FACTORY_CONTRACT_ID;
 
-export interface ICompaign {
+export interface ICampaign {
   owner: Address;
   name: string;
   description: string;
   image: string;
-  targetAmmount: number;
-  currentAmmount: number;
+  targetAmount: number;
+  currentAmount: number;
   transactions: number;
   endDate: string;
 }
 
 type FACTORY_TYPE = {
-  compaigns: ICompaign[];
-  isLoadingCompaigns: boolean;
-  isCreatingCompaign: boolean;
-  addCompaign: (
+  campaigns: ICampaign[];
+  isLoadingCampaigns: boolean;
+  isCreatingCampaign: boolean;
+  addCampaign: (
     name: string,
     description: string,
     image: string,
@@ -34,9 +34,9 @@ type FACTORY_TYPE = {
 export const ContractContext = createContext({} as FACTORY_TYPE);
 
 export const ContractProvider = ({ children }: { children: ReactNode }) => {
-  const [compaigns, setCompaigns] = useState<ICompaign[]>([]);
-  const [isLoadingCompaigns, setIsLoadingCompaigns] = useState<boolean>(false);
-  const [isCreatingCompaign, setIsCreatingCompaign] = useState<boolean>(false);
+  const [campaigns, setCampaigns] = useState<ICampaign[]>([]);
+  const [isLoadingCampaigns, setIsLoadingCampaigns] = useState<boolean>(false);
+  const [isCreatingCampaign, setIsCreatingCampaign] = useState<boolean>(false);
 
   const provider = new ethers.BrowserProvider((window as any).ethereum);
 
@@ -45,93 +45,93 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
     return new ethers.Contract(address, abi, signer);
   };
 
-  const addCompaign = async (
+  const addCampaign = async (
     name: string,
     description: string,
     image: string,
-    targetAmmount: number,
+    targetAmount: number,
     endDate: string,
     callback: () => void
   ) => {
-    setIsCreatingCompaign(true);
+    setIsCreatingCampaign(true);
     try {
       const FactoryContract = await getContract(
         FACTORY_CONTRACT_ADDRESS,
         FACTORY_ABI
       );
 
-      await FactoryContract.addCompaign(
+      await FactoryContract.addCampaign(
         name,
         description,
         image,
-        ethers.parseEther(targetAmmount.toString()),
+        ethers.parseEther(targetAmount.toString()),
         endDate
       );
     } catch (error) {
       console.error(error);
     } finally {
       callback();
-      getCompaigns();
-      setIsCreatingCompaign(false);
+      getCampaigns();
+      setIsCreatingCampaign(false);
     }
   };
 
-  const getCompaigns = async () => {
+  const getCampaigns = async () => {
     try {
-      setIsLoadingCompaigns(true);
+      setIsLoadingCampaigns(true);
       const FactoryContract = await getContract(
         FACTORY_CONTRACT_ADDRESS,
         FACTORY_ABI
       );
-      const compaigns = await FactoryContract.getCompaigns();
+      const campaigns = await FactoryContract.getCampaigns();
 
-      let compaigns_data: ICompaign[] = [];
+      let campaigns_data: ICampaign[] = [];
 
-      for (const compaign_address of compaigns) {
-        console.log("compaign_address: ", compaign_address);
-        const CompaignContract = await getContract(
-          compaign_address,
-          COMPAIGN_ABI
+      for (const campaign_address of campaigns) {
+        console.log("campaign_address: ", campaign_address);
+        const CampaignContract = await getContract(
+          campaign_address,
+          CAMPAIGN_ABI
         );
-        const owner = await CompaignContract.owner();
-        const name = await CompaignContract.name();
-        const description = await CompaignContract.description();
-        const image = await CompaignContract.image();
-        const targetAmmount = await CompaignContract.targetAmmount();
-        const currentAmmount = await CompaignContract.currentAmmount();
-        const transactions = await CompaignContract.transactions();
-        const endDate = await CompaignContract.endDate();
+        const owner = await CampaignContract.owner();
+        const name = await CampaignContract.name();
+        const description = await CampaignContract.description();
+        const image = await CampaignContract.image();
+        const targetAmount = await CampaignContract.targetAmount();
+        const currentAmount = await CampaignContract.currentAmount();
+        const transactions = await CampaignContract.transactions();
+        const endDate = await CampaignContract.endDate();
 
-        compaigns_data.push({
+        campaigns_data.push({
           owner,
           name,
           description,
           image,
-          targetAmmount: Number(targetAmmount),
-          currentAmmount: Number(currentAmmount),
+          targetAmount: Number(targetAmount),
+          currentAmount: Number(currentAmount),
           transactions: Number(transactions),
           endDate,
         });
       }
 
-      setCompaigns(compaigns_data);
+      setCampaigns(campaigns_data);
     } catch (error) {
     } finally {
-      setIsLoadingCompaigns(false);
+      setIsLoadingCampaigns(false);
     }
   };
 
   useEffect(() => {
-    getCompaigns();
+    getCampaigns();
   }, []);
 
   return (
     <ContractContext.Provider
       value={{
-        compaigns,
-        isLoadingCompaigns,
-        isCreatingCompaign,
-        addCompaign,
+        campaigns,
+        isLoadingCampaigns: isLoadingCampaigns,
+        isCreatingCampaign: isCreatingCampaign,
+        addCampaign: addCampaign,
       }}
     >
       {children}

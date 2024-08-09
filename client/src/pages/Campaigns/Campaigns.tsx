@@ -3,18 +3,18 @@ import { ContractContext } from "@/context/ContractContext";
 import { useContext } from "react";
 
 const Campaigns = () => {
-  const { compaigns, isLoadingCompaigns } = useContext(ContractContext);
+  const { campaigns, isLoadingCampaigns: isLoadingCampaigns } = useContext(ContractContext);
 
   return (
     <section className="mx-24 my-5">
       <h3 className="text-3xl font-bold">Popular Campaigns</h3>
       <div>
-        {isLoadingCompaigns ? (
+        {isLoadingCampaigns ? (
           <p>Loading...</p>
         ) : (
           <div className="flex gap-6 justify-between">
-            {compaigns.map((compaign, index) => {
-              return <Campaign key={index} compaign={compaign} />;
+              {campaigns.map((campaign, index) => {
+                return <Campaign key={index} campaign={campaign} />;
             })}
           </div>
         )}

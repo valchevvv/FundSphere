@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ContractContext, ICompaign } from "@/context/ContractContext";
+import { ContractContext, ICampaign } from "@/context/ContractContext";
 import { ReactElement, ReactEventHandler, useContext, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -18,16 +18,16 @@ const CreateCampaignDialog = () => {
   const { addCompaign, isCreatingCompaign } = useContext(ContractContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const [newCompaignData, setNewCompaignData] = useState<Partial<ICompaign>>({
+  const [newCompaignData, setNewCampaignData] = useState<Partial<ICampaign>>({
     name: "",
     description: "",
-    targetAmmount: 0,
+    targetAmount: 0,
     image: "",
     endDate: Date.now.toString(),
   });
 
   const changeHandler = (e: any): void => {
-    setNewCompaignData({
+    setNewCampaignData({
       ...newCompaignData,
       [e.target.id]: e.target.value,
     });
@@ -35,10 +35,10 @@ const CreateCampaignDialog = () => {
 
   const dialogShow = (open?: boolean) => {
     setIsOpen(open || false);
-    setNewCompaignData({
+    setNewCampaignData({
       name: "",
       description: "",
-      targetAmmount: 0,
+      targetAmount: 0,
       image: "",
       endDate: Date.now.toString(),
     });
@@ -48,7 +48,7 @@ const CreateCampaignDialog = () => {
     if (
       !newCompaignData.name ||
       !newCompaignData.description ||
-      !newCompaignData.targetAmmount ||
+      !newCompaignData.targetAmount ||
       !newCompaignData.endDate
     )
       return;
@@ -56,7 +56,7 @@ const CreateCampaignDialog = () => {
       newCompaignData.name,
       newCompaignData.description,
       newCompaignData.image || "",
-      newCompaignData.targetAmmount,
+      newCompaignData.targetAmount,
       newCompaignData.endDate,
       dialogShow
     );
@@ -73,7 +73,7 @@ const CreateCampaignDialog = () => {
         <DialogHeader>
           <DialogTitle>Add Compaign</DialogTitle>
           <DialogDescription>
-            Fill in the details below to create a new compaign
+            Fill in the details below to create a new campaign
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -102,17 +102,17 @@ const CreateCampaignDialog = () => {
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="targetAmmount" className="text-right">
+            <Label htmlFor="targetAmount" className="text-right">
               Target Ammount (ETH)
             </Label>
             <Input
-              id="targetAmmount"
+              id="targetAmount"
               type="number"
               min={0}
               step={0.0001}
-              value={newCompaignData.targetAmmount}
+              value={newCompaignData.targetAmount}
               onChange={changeHandler}
-              placeholder="Enter Ammount"
+              placeholder="Enter Amount"
               className="col-span-3"
             />
           </div>

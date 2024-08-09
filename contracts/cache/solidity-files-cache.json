@@ -1,10 +1,10 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "C:\\Users\\Daniel\\Documents\\FundSphere\\contracts\\contracts\\Compaign.sol": {
-      "lastModificationDate": 1723203193422,
-      "contentHash": "54c3c1f87a44fb310c08e877f8525c5e",
-      "sourceName": "contracts/Compaign.sol",
+    "/Users/denis.dinkov/Documents/GitHub/FundSphere/contracts/contracts/Campaign.sol": {
+      "lastModificationDate": 1723212186468,
+      "contentHash": "d1914fdea109580e533612bea33a466e",
+      "sourceName": "contracts/Campaign.sol",
       "solcConfig": {
         "version": "0.8.24",
         "settings": {
@@ -34,13 +34,13 @@
         "^0.8.7"
       ],
       "artifacts": [
-        "Compaign"
+        "Campaign"
       ]
     },
-    "C:\\Users\\Daniel\\Documents\\FundSphere\\contracts\\contracts\\CompaignFactory.sol": {
-      "lastModificationDate": 1723203328981,
-      "contentHash": "b7637ac7ac00370586016a7b3cbb4c9c",
-      "sourceName": "contracts/CompaignFactory.sol",
+    "/Users/denis.dinkov/Documents/GitHub/FundSphere/contracts/contracts/CampaignFactory.sol": {
+      "lastModificationDate": 1723212432308,
+      "contentHash": "5f8865a9d606fa0389630755a5cae093",
+      "sourceName": "contracts/CampaignFactory.sol",
       "solcConfig": {
         "version": "0.8.24",
         "settings": {
@@ -66,13 +66,13 @@
         }
       },
       "imports": [
-        "./Compaign.sol"
+        "./Campaign.sol"
       ],
       "versionPragmas": [
         "^0.8.7"
       ],
       "artifacts": [
-        "CompaignFactory"
+        "CampaignFactory"
       ]
     }
   }

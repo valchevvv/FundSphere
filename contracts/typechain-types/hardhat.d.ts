@@ -14,44 +14,44 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "Compaign",
+      name: "Campaign",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Compaign__factory>;
+    ): Promise<Contracts.Campaign__factory>;
     getContractFactory(
-      name: "CompaignFactory",
+      name: "CampaignFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CompaignFactory__factory>;
+    ): Promise<Contracts.CampaignFactory__factory>;
 
     getContractAt(
-      name: "Compaign",
+      name: "Campaign",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Compaign>;
+    ): Promise<Contracts.Campaign>;
     getContractAt(
-      name: "CompaignFactory",
+      name: "CampaignFactory",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.CompaignFactory>;
+    ): Promise<Contracts.CampaignFactory>;
 
     deployContract(
-      name: "Compaign",
+      name: "Campaign",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Compaign>;
+    ): Promise<Contracts.Campaign>;
     deployContract(
-      name: "CompaignFactory",
+      name: "CampaignFactory",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.CompaignFactory>;
+    ): Promise<Contracts.CampaignFactory>;
 
     deployContract(
-      name: "Compaign",
+      name: "Campaign",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Compaign>;
+    ): Promise<Contracts.Campaign>;
     deployContract(
-      name: "CompaignFactory",
+      name: "CampaignFactory",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.CompaignFactory>;
+    ): Promise<Contracts.CampaignFactory>;
 
     // default types
     getContractFactory(

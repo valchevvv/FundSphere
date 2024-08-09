@@ -2,30 +2,30 @@
 
 pragma solidity ^0.8.7;
 
-contract Compaign {
+contract Campaign {
     address public owner;
     string public name;
     string public description;
     string public image;
-    int public targetAmmount;
-    int public currentAmmount = 0;
+    int public targetAmount;
+    int public currentAmount = 0;
     int public transactions = 0;
     string public endDate;
 
     event DonationReceived(address indexed donor, uint amount);
 
     constructor(
-        string memory _name, 
+        string memory _name,
         string memory _description,
         string memory _image,
-        int _targetAmmount, 
+        int _targetAmount,
         string memory _endDate
     ) payable {
         owner = msg.sender;
         name = _name;
         description = _description;
         image = _image;
-        targetAmmount = _targetAmmount;
+        targetAmount = _targetAmount;
         endDate = _endDate;
     }
 
@@ -40,7 +40,7 @@ contract Compaign {
     function donate() public payable {
         require(msg.value > 0, "Donation must be greater than 0");
 
-        currentAmmount += int(msg.value);
+        currentAmount += int(msg.value);
         transactions += 1;
 
         emit DonationReceived(msg.sender, msg.value);
