@@ -1,96 +1,66 @@
-import { useAccount, useConnect, useDisconnect, useReadContract } from 'wagmi'
-import { readContract } from '@wagmi/core'
-
-import { useWriteContract } from 'wagmi'
-import Factory from './abi/CompaignFactory.json'
-import Campaign from "./abi/Compaign.json"
-
-const { abi: factoryAbi } = Factory
-const { abi: campaignAbi } = Campaign
-import { config } from './config'
-import { useEffect } from 'react'
+import HomePage from "./pages/HomePage";
+import Navbar from "./components/Navbar";
+import Campaigns from "./pages/Campaigns";
+import { useContext } from "react";
+import { ContractContext } from "./context/ContractContext";
 
 function App() {
-  const account = useAccount()
-  const { connectors, connect, status, error } = useConnect()
-  const { disconnect } = useDisconnect()
-  const { 
-    data, 
-    isPending,
-    writeContract 
-  } = useWriteContract()
-
-  async function submit() {   
-    writeContract({
-      address: '0xd4151E0D8cA47590cE10241D0b335249031c07dc',
-      abi:factoryAbi,
-      functionName: 'addCompaign',
-      args: [String("0x22370f8F8FDFb2a132eCc8Ec85F8E741fd7BbE4D"),String("DMS Nafta"), Number(10), String("12/12/2024")],
-    })
-  } 
-
-const {data: campaigns} = useReadContract({
-  address: '0xd4151E0D8cA47590cE10241D0b335249031c07dc',
-  abi: factoryAbi,
-  functionName: 'getCompaigns',
-  args: [],
-})
-  
-
- useEffect(() => {
-  const get = async () => {
-    const result = await readContract(config, {
-      abi:campaignAbi,
-      address: '0x0c00F17fAb43a9029c94B70683E0d039F7Eb9C39',
-      functionName: 'targetAmmount',
-    })
-
-    console.log(result)
-  }
-
-  get()
- }, [])
-  
+  const { compaigns, isLoadingCompaigns } = useContext(ContractContext);
   return (
     <>
-    <span>isPedning: {isPending}</span>
-    <span>hash: {data}</span>
+      <span>isLoadingCompaigns: {isLoadingCompaigns.toString()}</span>
       <div>
-        <h2>Account</h2>
-
-        <div>
-          status: {account.status}
-          <br />
-          addresses: {JSON.stringify(account.addresses)}
-          <br />
-          chainId: {account.chainId}
+        <span>compaigns:</span>
+        <div className="flex flex-col gap-2">
+          {compaigns.map((compaign, index) => {
+            return (
+              <p
+                key={index}
+                className="flex flex-col bg-black text-white p-3 w-fit"
+              >
+                <span>
+                  owner: <span className="font-bold">{compaign.owner}</span>
+                </span>
+                <span>
+                  name: <span className="font-bold">{compaign.name}</span>
+                </span>
+                <span>
+                  targetAmmount:{" "}
+                  <span className="font-bold">
+                    {compaign.targetAmmount.toLocaleString()}
+                  </span>
+                </span>
+                <span>
+                  currentAmmount:{" "}
+                  <span className="font-bold">
+                    {compaign.currentAmmount.toLocaleString()} ={" "}
+                    <span className="font-bold">
+                      {(Number(compaign.currentAmmount) /
+                        Number(compaign.targetAmmount)) *
+                        100}
+                      %
+                    </span>
+                  </span>
+                </span>
+                <span>
+                  transactions:{" "}
+                  <span className="font-bold">
+                    {compaign.transactions.toLocaleString()}
+                  </span>
+                </span>
+                <span>
+                  endDate: <span className="font-bold">{compaign.endDate}</span>
+                </span>
+              </p>
+            );
+          })}
         </div>
-
-        {account.status === 'connected' && (
-          <button type="button" onClick={() => disconnect()}>
-            Disconnect
-          </button>
-        )}
       </div>
-
-      <div>
-        <h2>Connect</h2>
-        {connectors.map((connector) => (
-          <button
-            key={connector.uid}
-            onClick={() => connect({ connector })}
-            type="button"
-          >
-            {connector.name}
-          </button>
-        ))}
-        <div>{status}</div>
-        <div>{error?.message}</div>
-      </div>
-
-      <button onClick={submit}>asd</button>
+      <Navbar />
+      <HomePage />
+      <Campaigns />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
