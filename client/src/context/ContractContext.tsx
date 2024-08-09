@@ -7,7 +7,7 @@ import { ethers } from "ethers";
 const COMPAIGN_CONTRACT_ADDRESS = import.meta.env.VITE_WC_COMPAIGN_CONTRACT_ID;
 const FACTORY_CONTRACT_ADDRESS = import.meta.env.VITE_WC_FACTORY_CONTRACT_ID;
 
-interface ICompaign {
+export interface ICompaign {
   owner: Address;
   name: string;
   targetAmmount: number;
@@ -46,6 +46,7 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
       let compaigns_data: ICompaign[] = [];
 
       for (const compaign_address of compaigns) {
+        console.log("compaign_address: ", compaign_address);
         const CompaignContract = await getContract(
           compaign_address,
           COMPAIGN_ABI
@@ -60,9 +61,9 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         compaigns_data.push({
           owner,
           name,
-          targetAmmount,
-          currentAmmount,
-          transactions,
+          targetAmmount: Number(targetAmmount),
+          currentAmmount: Number(currentAmmount),
+          transactions: Number(transactions),
           endDate,
         });
       }
