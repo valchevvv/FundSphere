@@ -15,10 +15,10 @@ import { ReactElement, ReactEventHandler, useContext, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 
 const CreateCampaignDialog = () => {
-  const { addCompaign, isCreatingCompaign } = useContext(ContractContext);
+  const { addCampaign, isCreatingCampaign } = useContext(ContractContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const [newCompaignData, setNewCampaignData] = useState<Partial<ICampaign>>({
+  const [newCampaignData, setNewCampaignData] = useState<Partial<ICampaign>>({
     name: "",
     description: "",
     targetAmount: 0,
@@ -28,7 +28,7 @@ const CreateCampaignDialog = () => {
 
   const changeHandler = (e: any): void => {
     setNewCampaignData({
-      ...newCompaignData,
+      ...newCampaignData,
       [e.target.id]: e.target.value,
     });
   };
@@ -46,18 +46,18 @@ const CreateCampaignDialog = () => {
 
   const submitEvent = () => {
     if (
-      !newCompaignData.name ||
-      !newCompaignData.description ||
-      !newCompaignData.targetAmount ||
-      !newCompaignData.endDate
+      !newCampaignData.name ||
+      !newCampaignData.description ||
+      !newCampaignData.targetAmount ||
+      !newCampaignData.endDate
     )
       return;
-    addCompaign(
-      newCompaignData.name,
-      newCompaignData.description,
-      newCompaignData.image || "",
-      newCompaignData.targetAmount,
-      newCompaignData.endDate,
+    addCampaign(
+      newCampaignData.name,
+      newCampaignData.description,
+      newCampaignData.image || "",
+      newCampaignData.targetAmount,
+      newCampaignData.endDate,
       dialogShow
     );
   };
@@ -71,7 +71,7 @@ const CreateCampaignDialog = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Compaign</DialogTitle>
+          <DialogTitle>Add Campaign</DialogTitle>
           <DialogDescription>
             Fill in the details below to create a new campaign
           </DialogDescription>
@@ -83,7 +83,7 @@ const CreateCampaignDialog = () => {
             </Label>
             <Input
               id="name"
-              value={newCompaignData.name}
+              value={newCampaignData.name}
               onChange={changeHandler}
               placeholder="Enter name"
               className="col-span-3"
@@ -95,7 +95,7 @@ const CreateCampaignDialog = () => {
             </Label>
             <Input
               id="description"
-              value={newCompaignData.description}
+              value={newCampaignData.description}
               onChange={changeHandler}
               placeholder="Enter description"
               className="col-span-3"
@@ -103,14 +103,14 @@ const CreateCampaignDialog = () => {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="targetAmount" className="text-right">
-              Target Ammount (ETH)
+              Target Amount (ETH)
             </Label>
             <Input
               id="targetAmount"
               type="number"
               min={0}
               step={0.0001}
-              value={newCompaignData.targetAmount}
+              value={newCampaignData.targetAmount}
               onChange={changeHandler}
               placeholder="Enter Amount"
               className="col-span-3"
@@ -122,7 +122,7 @@ const CreateCampaignDialog = () => {
             </Label>
             <Input
               id="image"
-              value={newCompaignData.image}
+              value={newCampaignData.image}
               onChange={changeHandler}
               placeholder="Enter Image (URL)"
               className="col-span-3"
@@ -135,7 +135,7 @@ const CreateCampaignDialog = () => {
             <Input
               id="endDate"
               type="date"
-              value={newCompaignData.endDate}
+              value={newCampaignData.endDate}
               onChange={changeHandler}
               placeholder="Enter End Date"
               className="col-span-3"
@@ -146,9 +146,9 @@ const CreateCampaignDialog = () => {
           <Button
             onClick={submitEvent}
             className="flex gap-1 items-center"
-            disabled={isCreatingCompaign}
+            disabled={isCreatingCampaign}
           >
-            {isCreatingCompaign && <LoadingSpinner />}
+            {isCreatingCampaign && <LoadingSpinner />}
             <span>Create</span>
           </Button>
         </DialogFooter>

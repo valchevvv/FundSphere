@@ -2,6 +2,7 @@ import user from "@/assets/user.svg";
 import { Progress } from "@/components/ui/progress";
 import { ICampaign as ICampaign } from "@/context/ContractContext";
 import { ethers } from "ethers";
+import { Button } from "./ui/button";
 
 const Campaign = ({ campaign: campaign }: { campaign: ICampaign }) => {
   const getProgress = (campaign.currentAmount / campaign.targetAmount) * 100;
@@ -14,10 +15,10 @@ const Campaign = ({ campaign: campaign }: { campaign: ICampaign }) => {
             campaign.image ||
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFyxmn_HPV2VAHFChq8-eufoQVYpXiz3RSEA&s"
           }
-          className="rounded-t-2xl"
+          className="rounded-t-2xl w-[100%]"
         />
       </div>
-      <div className="p-4 pb-8">
+      <div className="p-4">
         <h5 className="text-xl font-bold mb-2">{campaign.name}</h5>
         <p className="mb-4">{campaign.description}</p>
         <div className="w-full flex mb-2">
@@ -34,6 +35,9 @@ const Campaign = ({ campaign: campaign }: { campaign: ICampaign }) => {
             </p>
           </div>
         </div>
+        <Button className="w-[100%] mt-5 rounded-2xl">
+          Donate (0.0005 ETH)
+        </Button>
       </div>
     </div>
   );

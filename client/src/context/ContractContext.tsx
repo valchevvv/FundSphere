@@ -25,10 +25,11 @@ type FACTORY_TYPE = {
     name: string,
     description: string,
     image: string,
-    targetAmmount: number,
+    targetAmount: number,
     endDate: string,
     callback: () => void
   ) => void;
+  fundCampaign: (campaignId: Address, amount: bigint) => void;
 };
 
 export const ContractContext = createContext({} as FACTORY_TYPE);
@@ -76,6 +77,22 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const fundCampaign = async (campaignId: Address, amount: bigint) => {
+    try {
+      const signer = await provider.getSigner();
+      const transaction = {
+        to: campaignId,
+        value: amount,
+      };
+
+      const tx = await signer.sendTransaction(transaction);
+      await tx.wait();
+      getCampaigns();
+    } catch (error) {
+      console.error("Error funding quiz", error);
+    }
+  };
+
   const getCampaigns = async () => {
     try {
       setIsLoadingCampaigns(true);
@@ -88,7 +105,6 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
       let campaigns_data: ICampaign[] = [];
 
       for (const campaign_address of campaigns) {
-        console.log("campaign_address: ", campaign_address);
         const CampaignContract = await getContract(
           campaign_address,
           CAMPAIGN_ABI
@@ -132,6 +148,7 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         isLoadingCampaigns: isLoadingCampaigns,
         isCreatingCampaign: isCreatingCampaign,
         addCampaign: addCampaign,
+        fundCampaign: fundCampaign,
       }}
     >
       {children}
