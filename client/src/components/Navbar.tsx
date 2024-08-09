@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import CreateCampaignDialog from "@/components/CreateCampaignDialog"; // Import the dialog component
 import { useAccount, useConnect } from "wagmi";
 import { injected } from 'wagmi/connectors';
 
@@ -30,7 +29,7 @@ const Navbar = () => {
               <Button
                 onClick={() => connect({ connector: injected() })}
                 className="rounded-full px-8 bg-[#40C783] hover:bg-[#339F69] transition-colors ease-in-out">
-                Start Campaign
+                Connect Wallet
               </Button>
             )}
         </div>
