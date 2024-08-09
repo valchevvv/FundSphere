@@ -34,7 +34,7 @@ const Campaign = ({ campaign: campaign }: { campaign: ICampaign }) => {
         <h5 className="text-xl font-bold mb-2">{campaign.name}</h5>
         <p className="mb-4">{campaign.description}</p>
         <div className="w-full flex mb-2">
-          <img src={user} className="mr-2" /> {campaign.transactions} Donators
+          <img src={user} className="mr-2" /> {campaign.transactions} Donations
         </div>
         <div>
           <Progress value={getProgress} className="h-2 my-2" />
