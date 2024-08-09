@@ -12,7 +12,7 @@ const Campaigns = () => {
         {isLoadingCompaigns ? (
           <p>Loading...</p>
         ) : (
-          <div className="flex gap-6">
+          <div className="flex gap-6 justify-between">
             {compaigns.map((compaign, index) => {
               return <Campaign key={index} compaign={compaign} />;
             })}
