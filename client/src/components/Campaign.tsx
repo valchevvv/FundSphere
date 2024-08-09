@@ -11,6 +11,14 @@ import LoadingSpinner from "./LoadingSpinner";
 
 const Campaign = ({ campaign: campaign }: { campaign: ICampaign }) => {
   const getProgress = (campaign.currentAmount / campaign.targetAmount) * 100;
+
+  const endDatePassed = () => {
+    const endDate = new Date(campaign.endDate);
+    const currentDate = new Date();
+
+    return endDate < currentDate;
+  };
+
   const [isFundingCampaign, setIsFundingCampaign] = useState<boolean>(false);
 
   const { fundCampaign } = useContext(ContractContext);
@@ -48,7 +56,7 @@ const Campaign = ({ campaign: campaign }: { campaign: ICampaign }) => {
           </div>
         </div>
         <Button
-          className={`w-[100%] mt-5 flex gap-1 rounded-2xl ${getProgress >= 100 ? "bg-[#40C783] hover:bg-[#339F69]" : "bg-[#4088c7] hover:bg-[#2a5a84]"}  transition-colors ease-in-out`}
+          className={`w-[100%] mt-5 flex gap-1 rounded-2xl ${endDatePassed() ? "bg-black" : getProgress >= 100 ? "bg-[#40C783] hover:bg-[#339F69]" : "bg-[#4088c7] hover:bg-[#2a5a84]"}  transition-colors ease-in-out`}
           onClick={() => {
             setIsFundingCampaign(true);
             fundCampaign(
@@ -57,10 +65,12 @@ const Campaign = ({ campaign: campaign }: { campaign: ICampaign }) => {
               doneFunding
             );
           }}
-          disabled={getProgress >= 100 || isFundingCampaign}
+          disabled={getProgress >= 100 || isFundingCampaign || endDatePassed()}
         >
           {isFundingCampaign && <LoadingSpinner />}
-          {isFundingCampaign ? (
+          {endDatePassed() ? (
+            <span>End date passed</span>
+          ) : isFundingCampaign ? (
             <span>Funding</span>
           ) : getProgress >= 100 ? (
             <span>Completed</span>
