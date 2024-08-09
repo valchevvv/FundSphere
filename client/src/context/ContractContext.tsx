@@ -1,6 +1,6 @@
 import { Address } from "viem";
-import { abi as CAMPAIGN_ABI } from "../abi/Compaign.json";
-import { abi as FACTORY_ABI } from "../abi/CompaignFactory.json";
+import { abi as CAMPAIGN_ABI } from "../abi/Campaign.json";
+import { abi as FACTORY_ABI } from "../abi/CampaignFactory.json";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { ethers } from "ethers";
 
