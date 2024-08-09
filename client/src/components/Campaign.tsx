@@ -1,11 +1,23 @@
 import user from "@/assets/user.svg";
 import { Progress } from "@/components/ui/progress";
-import { ICampaign as ICampaign } from "@/context/ContractContext";
+import {
+  ContractContext,
+  ICampaign as ICampaign,
+} from "@/context/ContractContext";
 import { ethers } from "ethers";
 import { Button } from "./ui/button";
+import { useContext, useState } from "react";
+import LoadingSpinner from "./LoadingSpinner";
 
 const Campaign = ({ campaign: campaign }: { campaign: ICampaign }) => {
   const getProgress = (campaign.currentAmount / campaign.targetAmount) * 100;
+  const [isFundingCampaign, setIsFundingCampaign] = useState<boolean>(false);
+
+  const { fundCampaign } = useContext(ContractContext);
+
+  const doneFunding = () => {
+    setIsFundingCampaign(false);
+  };
 
   return (
     <div className="bg-[#EDEFFC] border rounded-2xl w-72 mt-10">
@@ -35,8 +47,26 @@ const Campaign = ({ campaign: campaign }: { campaign: ICampaign }) => {
             </p>
           </div>
         </div>
-        <Button className="w-[100%] mt-5 rounded-2xl">
-          Donate (0.0005 ETH)
+        <Button
+          className={`w-[100%] mt-5 flex gap-1 rounded-2xl ${getProgress >= 100 ? "bg-[#40C783] hover:bg-[#339F69]" : "bg-[#4088c7] hover:bg-[#2a5a84]"}  transition-colors ease-in-out`}
+          onClick={() => {
+            setIsFundingCampaign(true);
+            fundCampaign(
+              campaign.address,
+              ethers.parseEther("0.0005"),
+              doneFunding
+            );
+          }}
+          disabled={getProgress >= 100 || isFundingCampaign}
+        >
+          {isFundingCampaign && <LoadingSpinner />}
+          {isFundingCampaign ? (
+            <span>Funding</span>
+          ) : getProgress >= 100 ? (
+            <span>Completed</span>
+          ) : (
+            <span>Donate (0.0005 ETH)</span>
+          )}
         </Button>
       </div>
     </div>

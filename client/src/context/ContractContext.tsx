@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 const FACTORY_CONTRACT_ADDRESS = import.meta.env.VITE_WC_FACTORY_CONTRACT_ID;
 
 export interface ICampaign {
+  address: Address;
   owner: Address;
   name: string;
   description: string;
@@ -29,7 +30,11 @@ type FACTORY_TYPE = {
     endDate: string,
     callback: () => void
   ) => void;
-  fundCampaign: (campaignId: Address, amount: bigint) => void;
+  fundCampaign: (
+    campaignId: Address,
+    amount: bigint,
+    callback: () => void
+  ) => void;
 };
 
 export const ContractContext = createContext({} as FACTORY_TYPE);
@@ -77,7 +82,11 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const fundCampaign = async (campaignId: Address, amount: bigint) => {
+  const fundCampaign = async (
+    campaignId: Address,
+    amount: bigint,
+    callback: () => void
+  ) => {
     try {
       const signer = await provider.getSigner();
       const transaction = {
@@ -90,6 +99,8 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
       getCampaigns();
     } catch (error) {
       console.error("Error funding quiz", error);
+    } finally {
+      callback();
     }
   };
 
@@ -119,6 +130,7 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         const endDate = await CampaignContract.endDate();
 
         campaigns_data.push({
+          address: campaign_address,
           owner,
           name,
           description,
