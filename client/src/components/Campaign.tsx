@@ -1,6 +1,7 @@
 import user from "@/assets/user.svg";
 import { Progress } from "@/components/ui/progress";
 import { ICompaign } from "@/context/ContractContext";
+import { ethers } from "ethers";
 
 const Campaign = ({ compaign }: { compaign: ICompaign }) => {
   const getProgress = (compaign.currentAmmount / compaign.targetAmmount) * 100;
@@ -9,15 +10,16 @@ const Campaign = ({ compaign }: { compaign: ICompaign }) => {
     <div className="bg-[#EDEFFC] border rounded-2xl w-72 mt-10">
       <div>
         <img
-          src="https://upload.wikimedia.org/wikipedia/commons/7/71/Wolfsburg_VW-Werk.jpg"
+          src={
+            compaign.image ||
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFyxmn_HPV2VAHFChq8-eufoQVYpXiz3RSEA&s"
+          }
           className="rounded-t-2xl"
         />
       </div>
       <div className="p-4 pb-8">
         <h5 className="text-xl font-bold mb-2">{compaign.name}</h5>
-        <p className="mb-4">
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorem eos.
-        </p>
+        <p className="mb-4">{compaign.description}</p>
         <div className="w-full flex mb-2">
           <img src={user} className="mr-2" /> {compaign.transactions} Donators
         </div>
@@ -25,10 +27,10 @@ const Campaign = ({ compaign }: { compaign: ICompaign }) => {
           <Progress value={getProgress} className="h-2 my-2" />
           <div className="flex justify-between">
             <p className="text-xs font-bold">
-              Donated: {compaign.currentAmmount} eth
+              Donated: {ethers.formatEther(compaign.currentAmmount)} eth
             </p>
             <p className="text-xs text-slate-400">
-              From: {compaign.targetAmmount} eth
+              From: {ethers.formatEther(compaign.targetAmmount)} eth
             </p>
           </div>
         </div>
