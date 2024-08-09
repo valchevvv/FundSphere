@@ -3,7 +3,7 @@
 pragma solidity ^0.8.7;
 
 contract Compaign {
-    string public owner;
+    address public owner;
     string public name;
     string public description;
     string public image;
@@ -15,14 +15,13 @@ contract Compaign {
     event DonationReceived(address indexed donor, uint amount);
 
     constructor(
-        string memory _owner, 
         string memory _name, 
         string memory _description,
         string memory _image,
         int _targetAmmount, 
         string memory _endDate
     ) payable {
-        owner = _owner;
+        owner = msg.sender;
         name = _name;
         description = _description;
         image = _image;

@@ -10,8 +10,53 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ContractContext, ICompaign } from "@/context/ContractContext";
+import { ReactElement, ReactEventHandler, useContext, useState } from "react";
 
 const CreateCampaignDialog = () => {
+  const { addCompaign } = useContext(ContractContext);
+
+  const [newCompaignData, setNewCompaignData] = useState<Partial<ICompaign>>({
+    name: "",
+    description: "",
+    targetAmmount: 0,
+    image: "",
+  });
+
+  const changeHandler = (e: any): void => {
+    // if (e.target.id === "endDate") {
+    //   console.log(e.target.value);
+    //   // const date = e.target.value.split("-");
+    //   // const newDate = `${date[1]}/${date[2]}/${date[0]}`;
+    //   // setNewCompaignData({
+    //   //   ...newCompaignData,
+    //   //   [e.target.id]: newDate,
+    //   // });
+    //   return;
+    // }
+    setNewCompaignData({
+      ...newCompaignData,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const submitEvent = () => {
+    if (
+      !newCompaignData.name ||
+      !newCompaignData.description ||
+      !newCompaignData.targetAmmount ||
+      !newCompaignData.endDate
+    )
+      return;
+    addCompaign(
+      newCompaignData.name,
+      newCompaignData.description,
+      newCompaignData.image || "",
+      newCompaignData.targetAmmount,
+      newCompaignData.endDate
+    );
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -33,7 +78,8 @@ const CreateCampaignDialog = () => {
             </Label>
             <Input
               id="name"
-              value=""
+              value={newCompaignData.name}
+              onChange={changeHandler}
               placeholder="Enter name"
               className="col-span-3"
             />
@@ -44,25 +90,55 @@ const CreateCampaignDialog = () => {
             </Label>
             <Input
               id="description"
-              value=""
+              value={newCompaignData.description}
+              onChange={changeHandler}
               placeholder="Enter description"
               className="col-span-3"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="targetAmmount" className="text-right">
-              Target Ammount
+              Target Ammount (ETH)
             </Label>
             <Input
               id="targetAmmount"
-              value=""
+              type="number"
+              min={0}
+              step={0.0001}
+              value={newCompaignData.targetAmmount}
+              onChange={changeHandler}
               placeholder="Enter Ammount"
+              className="col-span-3"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="image" className="text-right">
+              Image
+            </Label>
+            <Input
+              id="image"
+              value={newCompaignData.image}
+              onChange={changeHandler}
+              placeholder="Enter Image (URL)"
+              className="col-span-3"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="image" className="text-right">
+              End Date
+            </Label>
+            <Input
+              id="endDate"
+              type="date"
+              value={newCompaignData.endDate}
+              onChange={changeHandler}
+              placeholder="Enter End Date"
               className="col-span-3"
             />
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit">Create</Button>
+          <Button onClick={submitEvent}>Create</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

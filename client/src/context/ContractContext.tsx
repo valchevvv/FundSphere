@@ -21,7 +21,6 @@ type FACTORY_TYPE = {
   compaigns: ICompaign[];
   isLoadingCompaigns: boolean;
   addCompaign: (
-    owner: string,
     name: string,
     description: string,
     image: string,
@@ -44,7 +43,6 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addCompaign = async (
-    owner: string,
     name: string,
     description: string,
     image: string,
@@ -57,12 +55,11 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         FACTORY_ABI
       );
 
-      await FactoryContract.createCompaign(
-        owner,
+      await FactoryContract.addCompaign(
         name,
         description,
         image,
-        targetAmmount,
+        ethers.parseEther(targetAmmount.toString()),
         endDate
       );
     } catch (error) {

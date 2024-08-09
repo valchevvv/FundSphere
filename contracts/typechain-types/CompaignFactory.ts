@@ -38,7 +38,7 @@ export interface CompaignFactoryInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "addCompaign",
-    values: [string, string, string, string, BigNumberish, string]
+    values: [string, string, string, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "compaigns",
@@ -71,7 +71,7 @@ export interface CompaignFactoryInterface extends Interface {
 export namespace CompaignCreatedEvent {
   export type InputTuple = [
     compaignAddress: AddressLike,
-    owner: string,
+    owner: AddressLike,
     name: string,
     targetAmmount: BigNumberish,
     endDate: string
@@ -163,7 +163,6 @@ export interface CompaignFactory extends BaseContract {
 
   addCompaign: TypedContractMethod<
     [
-      _owner: string,
       _name: string,
       _description: string,
       _image: string,
@@ -192,7 +191,6 @@ export interface CompaignFactory extends BaseContract {
     nameOrSignature: "addCompaign"
   ): TypedContractMethod<
     [
-      _owner: string,
       _name: string,
       _description: string,
       _image: string,
@@ -228,7 +226,7 @@ export interface CompaignFactory extends BaseContract {
   >;
 
   filters: {
-    "CompaignCreated(address,string,string,int256,string)": TypedContractEvent<
+    "CompaignCreated(address,address,string,int256,string)": TypedContractEvent<
       CompaignCreatedEvent.InputTuple,
       CompaignCreatedEvent.OutputTuple,
       CompaignCreatedEvent.OutputObject
