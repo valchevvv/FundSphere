@@ -20,6 +20,14 @@ export interface ICompaign {
 type FACTORY_TYPE = {
   compaigns: ICompaign[];
   isLoadingCompaigns: boolean;
+  addCompaign: (
+    owner: string,
+    name: string,
+    description: string,
+    image: string,
+    targetAmmount: number,
+    endDate: string
+  ) => void;
 };
 
 export const ContractContext = createContext({} as FACTORY_TYPE);
@@ -33,6 +41,33 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
   const getContract = async (address: Address, abi: ethers.InterfaceAbi) => {
     const signer = await provider.getSigner();
     return new ethers.Contract(address, abi, signer);
+  };
+
+  const addCompaign = async (
+    owner: string,
+    name: string,
+    description: string,
+    image: string,
+    targetAmmount: number,
+    endDate: string
+  ) => {
+    try {
+      const FactoryContract = await getContract(
+        FACTORY_CONTRACT_ADDRESS,
+        FACTORY_ABI
+      );
+
+      await FactoryContract.createCompaign(
+        owner,
+        name,
+        description,
+        image,
+        targetAmmount,
+        endDate
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const getCompaigns = async () => {
@@ -89,6 +124,7 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
       value={{
         compaigns,
         isLoadingCompaigns,
+        addCompaign,
       }}
     >
       {children}
