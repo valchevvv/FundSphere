@@ -5,6 +5,8 @@ pragma solidity ^0.8.7;
 contract Compaign {
     string public owner;
     string public name;
+    string public description;
+    string public image;
     int public targetAmmount;
     int public currentAmmount = 0;
     int public transactions = 0;
@@ -15,11 +17,15 @@ contract Compaign {
     constructor(
         string memory _owner, 
         string memory _name, 
+        string memory _description,
+        string memory _image,
         int _targetAmmount, 
         string memory _endDate
     ) payable {
         owner = _owner;
         name = _name;
+        description = _description;
+        image = _image;
         targetAmmount = _targetAmmount;
         endDate = _endDate;
     }

@@ -4,12 +4,13 @@ import { abi as FACTORY_ABI } from "../abi/CompaignFactory.json";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { ethers } from "ethers";
 
-const COMPAIGN_CONTRACT_ADDRESS = import.meta.env.VITE_WC_COMPAIGN_CONTRACT_ID;
 const FACTORY_CONTRACT_ADDRESS = import.meta.env.VITE_WC_FACTORY_CONTRACT_ID;
 
 export interface ICompaign {
   owner: Address;
   name: string;
+  description: string;
+  image: string;
   targetAmmount: number;
   currentAmmount: number;
   transactions: number;
@@ -53,6 +54,8 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         );
         const owner = await CompaignContract.owner();
         const name = await CompaignContract.name();
+        const description = await CompaignContract.description();
+        const image = await CompaignContract.image();
         const targetAmmount = await CompaignContract.targetAmmount();
         const currentAmmount = await CompaignContract.currentAmmount();
         const transactions = await CompaignContract.transactions();
@@ -61,6 +64,8 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         compaigns_data.push({
           owner,
           name,
+          description,
+          image,
           targetAmmount: Number(targetAmmount),
           currentAmmount: Number(currentAmmount),
           transactions: Number(transactions),

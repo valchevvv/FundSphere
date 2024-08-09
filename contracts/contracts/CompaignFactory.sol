@@ -13,10 +13,12 @@ contract CompaignFactory {
     function addCompaign(
         string memory _owner, 
         string memory _name, 
+        string memory _description,
+        string memory _image,
         int _targetAmmount, 
         string memory _endDate
     ) public {
-        Compaign newCompaign = new Compaign(_owner, _name, _targetAmmount, _endDate);
+        Compaign newCompaign = new Compaign(_owner, _name, _description, _image, _targetAmmount, _endDate);
         compaigns.push(newCompaign);
         emit CompaignCreated(address(newCompaign), _owner, _name, _targetAmmount, _endDate);
     }

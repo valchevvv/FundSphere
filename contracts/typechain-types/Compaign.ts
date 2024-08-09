@@ -27,8 +27,10 @@ export interface CompaignInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "currentAmmount"
+      | "description"
       | "donate"
       | "endDate"
+      | "image"
       | "name"
       | "owner"
       | "targetAmmount"
@@ -41,8 +43,13 @@ export interface CompaignInterface extends Interface {
     functionFragment: "currentAmmount",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "description",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "donate", values?: undefined): string;
   encodeFunctionData(functionFragment: "endDate", values?: undefined): string;
+  encodeFunctionData(functionFragment: "image", values?: undefined): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -58,8 +65,13 @@ export interface CompaignInterface extends Interface {
     functionFragment: "currentAmmount",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "description",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "donate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "endDate", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "image", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
@@ -130,9 +142,13 @@ export interface Compaign extends BaseContract {
 
   currentAmmount: TypedContractMethod<[], [bigint], "view">;
 
+  description: TypedContractMethod<[], [string], "view">;
+
   donate: TypedContractMethod<[], [void], "payable">;
 
   endDate: TypedContractMethod<[], [string], "view">;
+
+  image: TypedContractMethod<[], [string], "view">;
 
   name: TypedContractMethod<[], [string], "view">;
 
@@ -150,10 +166,16 @@ export interface Compaign extends BaseContract {
     nameOrSignature: "currentAmmount"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "description"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "donate"
   ): TypedContractMethod<[], [void], "payable">;
   getFunction(
     nameOrSignature: "endDate"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "image"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "name"

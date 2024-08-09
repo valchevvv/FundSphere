@@ -38,7 +38,7 @@ export interface CompaignFactoryInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "addCompaign",
-    values: [string, string, BigNumberish, string]
+    values: [string, string, string, string, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "compaigns",
@@ -165,6 +165,8 @@ export interface CompaignFactory extends BaseContract {
     [
       _owner: string,
       _name: string,
+      _description: string,
+      _image: string,
       _targetAmmount: BigNumberish,
       _endDate: string
     ],
@@ -192,6 +194,8 @@ export interface CompaignFactory extends BaseContract {
     [
       _owner: string,
       _name: string,
+      _description: string,
+      _image: string,
       _targetAmmount: BigNumberish,
       _endDate: string
     ],
