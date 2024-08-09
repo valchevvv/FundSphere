@@ -12,31 +12,35 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ContractContext, ICompaign } from "@/context/ContractContext";
 import { ReactElement, ReactEventHandler, useContext, useState } from "react";
+import LoadingSpinner from "./LoadingSpinner";
 
 const CreateCampaignDialog = () => {
-  const { addCompaign } = useContext(ContractContext);
+  const { addCompaign, isCreatingCompaign } = useContext(ContractContext);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const [newCompaignData, setNewCompaignData] = useState<Partial<ICompaign>>({
     name: "",
     description: "",
     targetAmmount: 0,
     image: "",
+    endDate: Date.now.toString(),
   });
 
   const changeHandler = (e: any): void => {
-    // if (e.target.id === "endDate") {
-    //   console.log(e.target.value);
-    //   // const date = e.target.value.split("-");
-    //   // const newDate = `${date[1]}/${date[2]}/${date[0]}`;
-    //   // setNewCompaignData({
-    //   //   ...newCompaignData,
-    //   //   [e.target.id]: newDate,
-    //   // });
-    //   return;
-    // }
     setNewCompaignData({
       ...newCompaignData,
       [e.target.id]: e.target.value,
+    });
+  };
+
+  const dialogShow = (open?: boolean) => {
+    setIsOpen(open || false);
+    setNewCompaignData({
+      name: "",
+      description: "",
+      targetAmmount: 0,
+      image: "",
+      endDate: Date.now.toString(),
     });
   };
 
@@ -53,12 +57,13 @@ const CreateCampaignDialog = () => {
       newCompaignData.description,
       newCompaignData.image || "",
       newCompaignData.targetAmmount,
-      newCompaignData.endDate
+      newCompaignData.endDate,
+      dialogShow
     );
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={dialogShow}>
       <DialogTrigger asChild>
         <Button className="rounded-full px-8 bg-[#40C783] hover:bg-[#339F69] transition-colors ease-in-out">
           Start Campaign
@@ -138,7 +143,14 @@ const CreateCampaignDialog = () => {
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={submitEvent}>Create</Button>
+          <Button
+            onClick={submitEvent}
+            className="flex gap-1 items-center"
+            disabled={isCreatingCompaign}
+          >
+            {isCreatingCompaign && <LoadingSpinner />}
+            <span>Create</span>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -20,12 +20,14 @@ export interface ICompaign {
 type FACTORY_TYPE = {
   compaigns: ICompaign[];
   isLoadingCompaigns: boolean;
+  isCreatingCompaign: boolean;
   addCompaign: (
     name: string,
     description: string,
     image: string,
     targetAmmount: number,
-    endDate: string
+    endDate: string,
+    callback: () => void
   ) => void;
 };
 
@@ -34,6 +36,7 @@ export const ContractContext = createContext({} as FACTORY_TYPE);
 export const ContractProvider = ({ children }: { children: ReactNode }) => {
   const [compaigns, setCompaigns] = useState<ICompaign[]>([]);
   const [isLoadingCompaigns, setIsLoadingCompaigns] = useState<boolean>(false);
+  const [isCreatingCompaign, setIsCreatingCompaign] = useState<boolean>(false);
 
   const provider = new ethers.BrowserProvider((window as any).ethereum);
 
@@ -47,8 +50,10 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
     description: string,
     image: string,
     targetAmmount: number,
-    endDate: string
+    endDate: string,
+    callback: () => void
   ) => {
+    setIsCreatingCompaign(true);
     try {
       const FactoryContract = await getContract(
         FACTORY_CONTRACT_ADDRESS,
@@ -64,6 +69,10 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
       );
     } catch (error) {
       console.error(error);
+    } finally {
+      callback();
+      getCompaigns();
+      setIsCreatingCompaign(false);
     }
   };
 
@@ -121,6 +130,7 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
       value={{
         compaigns,
         isLoadingCompaigns,
+        isCreatingCompaign,
         addCompaign,
       }}
     >
