@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui/button";
 import CreateCampaignDialog from "@/components/CreateCampaignDialog"; // Import the dialog component
+import { useAccount, useConnect } from "wagmi";
+import { injected } from 'wagmi/connectors';
 
 const Navbar = () => {
+  const account = useAccount();
+  const { connect } = useConnect();
+
   return (
     <header className="pt-6 px-16 pb-4 bg-[#EDEFFC] border-b">
       <div className="flex justify-between items-center">
@@ -13,8 +18,21 @@ const Navbar = () => {
         <a>Logo</a>
         <div className="flex gap-3 items-center">
           <div className="hover:underline cursor-pointer">Help Center</div>
-          <div className="hover:underline cursor-pointer">Connect Wallet</div>
-          <CreateCampaignDialog />
+          {account.isConnected
+            ? (
+              <Button
+                disabled={true}
+                className="rounded-full px-8 bg-[#40C783] hover:bg-[#339F69] transition-colors ease-in-out">
+                Connected
+              </Button>
+            )
+            : (
+              <Button
+                onClick={() => connect({ connector: injected() })}
+                className="rounded-full px-8 bg-[#40C783] hover:bg-[#339F69] transition-colors ease-in-out">
+                Start Campaign
+              </Button>
+            )}
         </div>
       </div>
     </header>

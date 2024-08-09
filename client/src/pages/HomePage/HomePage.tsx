@@ -2,8 +2,12 @@ import { Button } from "@/components/ui/button";
 import one from "@/assets/1.svg";
 import two from "@/assets/2.svg";
 import three from "@/assets/3.svg";
+import CreateCampaignDialog from "@/components/CreateCampaignDialog"; // Import the dialog component
+import { useAccount } from "wagmi";
 
 const HomePage = () => {
+  const account = useAccount();
+
   return (
     <section className="mx-24 my-5 flex gap-20">
       <div className="flex flex-col justify-center w-4/12">
@@ -12,9 +16,15 @@ const HomePage = () => {
           Платформата свързва хората, които имат нужда от помощ с хората, които
           имат нужда да помогнат по модерен и технологичен начин.
         </p>
-        <Button className="rounded-full px-8 py-5 font-medium">
-          Learn More
-        </Button>
+        {account.isConnected ? (
+          <CreateCampaignDialog />
+        ) : (
+          <Button
+            disabled={true}
+            className="rounded-full px-8 bg-[#40C783] hover:bg-[#339F69] transition-colors ease-in-out">
+            Please connect your wallet to start a campaign
+          </Button>
+        )}
       </div>
       <div className="flex gap-6 ">
         <div className="px-4 py-8 bg-[#40C783] rounded-2xl w-60 mt-10 h-fit">
