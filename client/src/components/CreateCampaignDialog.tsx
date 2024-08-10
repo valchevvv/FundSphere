@@ -65,7 +65,7 @@ const CreateCampaignDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={dialogShow}>
       <DialogTrigger asChild>
-        <Button className="rounded-full px-8 bg-[#40C783] hover:bg-[#339F69] transition-colors ease-in-out">
+        <Button className="rounded-full px-8 bg-[#4088c7] hover:bg-[#2a5a84] shadow-2xl transition-colors ease-in-out">
           Start Campaign
         </Button>
       </DialogTrigger>

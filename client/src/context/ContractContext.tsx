@@ -35,6 +35,8 @@ type FACTORY_TYPE = {
     amount: bigint,
     callback: () => void
   ) => void;
+  popularCampaigns: () => ICampaign[];
+  latestCampaigns: () => ICampaign[];
 };
 
 export const ContractContext = createContext({} as FACTORY_TYPE);
@@ -149,6 +151,20 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const getPopularCampaigns = () => {
+    return [...campaigns]
+      .sort((a, b) => b.transactions - a.transactions)
+      .slice(0, 5);
+  };
+
+  const getLatestCampaigns = () => {
+    return [...campaigns]
+      .sort(
+        (a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
+      )
+      .slice(0, 5);
+  };
+
   useEffect(() => {
     getCampaigns();
   }, []);
@@ -161,6 +177,8 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         isCreatingCampaign: isCreatingCampaign,
         addCampaign: addCampaign,
         fundCampaign: fundCampaign,
+        popularCampaigns: getPopularCampaigns,
+        latestCampaigns: getLatestCampaigns,
       }}
     >
       {children}

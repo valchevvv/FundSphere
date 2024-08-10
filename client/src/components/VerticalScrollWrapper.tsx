@@ -34,7 +34,7 @@ const VerticalScrollWrapper = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <div className="relative rounded-2xl p-2">
+    <div className="relative rounded-2xl px-2">
       {canScrollLeft && (
         <div
           className="absolute left-0 top-0 bottom-0 h-full flex items-center justify-center"

@@ -1,16 +1,17 @@
 import Campaign from "@/components/Campaign";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import VerticalScrollWrapper from "@/components/VerticalScrollWrapper";
 import { ContractContext } from "@/context/ContractContext";
 import { useContext } from "react";
 
-const Campaigns = () => {
-  const { latestCampaigns } = useContext(ContractContext);
+const PopularCampaigns = () => {
+  const { popularCampaigns } = useContext(ContractContext);
 
-  const campaigns = latestCampaigns();
+  const campaigns = popularCampaigns();
 
   return (
     <section className="mb-12">
-      <h2 className="text-2xl font-semibold px-2">All Campaigns</h2>
+      <h2 className="text-2xl font-semibold px-2">Popular Campaigns</h2>
       {campaigns.length ? (
         <VerticalScrollWrapper>
           <div className="flex space-x-6">
@@ -29,4 +30,4 @@ const Campaigns = () => {
   );
 };
 
-export default Campaigns;
+export default PopularCampaigns;
