@@ -1,12 +1,11 @@
 import Campaign from "@/components/Campaign";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import VerticalScrollWrapper from "@/components/VerticalScrollWrapper";
 import { ContractContext } from "@/context/ContractContext";
 import { useContext } from "react";
 
 const Campaigns = () => {
-  const { latestCampaigns } = useContext(ContractContext);
-
-  const campaigns = latestCampaigns();
+  const { campaigns } = useContext(ContractContext);
 
   return (
     <section className="mb-12">
