@@ -2,68 +2,91 @@ import { Button } from "@/components/ui/button";
 import one from "@/assets/1.svg";
 import two from "@/assets/2.svg";
 import three from "@/assets/3.svg";
-import CreateCampaignDialog from "@/components/CreateCampaignDialog"; // Import the dialog component
+import VerticalScrollWrapper from "@/components/VerticalScrollWrapper";
 import { useAccount } from "wagmi";
+
+// Import a background image
 
 const HomePage = () => {
   const account = useAccount();
 
+  const campaigns = [
+    { title: "Campaign Title 1", img: one },
+    { title: "Campaign Title 2", img: two },
+    { title: "Campaign Title 3", img: three },
+    { title: "Campaign Title 4", img: one },
+    { title: "Campaign Title 5", img: two },
+    { title: "Campaign Title 6", img: three },
+    { title: "Campaign Title 7", img: one },
+    { title: "Campaign Title 8", img: two },
+    { title: "Campaign Title 9", img: three },
+    { title: "Campaign Title 10", img: one },
+  ];
+
   return (
-    <section className="mx-24 my-5 flex gap-20">
-      <div className="flex flex-col justify-center w-4/12">
-        <h3 className="mb-2 font-bold text-3xl">How to start campaign?</h3>
-        <p className="mb-2">
-          Платформата свързва хората, които имат нужда от помощ с хората, които
-          имат нужда да помогнат по модерен и технологичен начин.
-        </p>
-        {account.isConnected ? (
-          <CreateCampaignDialog />
-        ) : (
-          <Button
-            disabled={true}
-            className="rounded-full px-8 bg-[#40C783] hover:bg-[#339F69] transition-colors ease-in-out">
-            Please connect your wallet to start a campaign
-          </Button>
-        )}
+    <div className="p-6">
+      {/* Welcome Section */}
+      <section className="relative text-center text-white py-16 px-6 rounded-2xl m-5 min-h-[400px] flex items-center justify-center bg-[#40C783]/70">
+        <div className="relative z-10">
+          <h1 className="text-5xl font-bold mb-4">Welcome to FundSphere</h1>
+          <p className="text-xl mb-8">
+            Join our community in making a difference. Explore and support the
+            campaigns that matter to you.
+          </p>
+        </div>
+      </section>
+
+      {/* Popular Campaigns Section */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-semibold mb-4">Popular Campaigns</h2>
+        <VerticalScrollWrapper>
+          <div className="flex space-x-6">
+            {campaigns.map((campaign, index) => (
+              <div key={index} className="campaign-card min-w-[250px]">
+                <img
+                  src={campaign.img}
+                  alt={`Campaign ${index + 1}`}
+                  className="w-full h-48 object-cover"
+                />
+                <h3 className="text-xl font-medium mt-4">{campaign.title}</h3>
+                <p className="text-gray-600 mt-2">
+                  Brief description of the campaign...
+                </p>
+              </div>
+            ))}
+          </div>
+        </VerticalScrollWrapper>
+      </section>
+
+      {/* Latest Campaigns Section */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-semibold mb-4">Latest Campaigns</h2>
+        <VerticalScrollWrapper>
+          <div className="flex space-x-6">
+            {campaigns.map((campaign, index) => (
+              <div key={index} className="campaign-card min-w-[250px]">
+                <img
+                  src={campaign.img}
+                  alt={`Campaign ${index + 1}`}
+                  className="w-full h-48 object-cover"
+                />
+                <h3 className="text-xl font-medium mt-4">{campaign.title}</h3>
+                <p className="text-gray-600 mt-2">
+                  Brief description of the campaign...
+                </p>
+              </div>
+            ))}
+          </div>
+        </VerticalScrollWrapper>
+      </section>
+
+      {/* Explore All Campaigns Button */}
+      <div className="text-center">
+        <Button className="px-6 py-3 bg-[#40C783] text-white rounded-lg">
+          Explore All Campaigns
+        </Button>
       </div>
-      <div className="flex gap-6 ">
-        <div className="px-4 py-8 bg-[#40C783] rounded-2xl w-60 mt-10 h-fit">
-          <div className="flex pb-6">
-            <img src={one} />
-            <h4 className="text-2xl font-bold text-slate-100 ml-2">
-              Create campaign
-            </h4>
-          </div>
-          <p className="mb-4">
-            Стартирайте своята кампания за минути като следвате стъпките и
-            инструкциите на платформата.
-          </p>
-        </div>
-        <div className="px-4 py-8 bg-[#40C783] rounded-2xl w-60 mt-28 h-fit">
-          <div className="flex pb-6">
-            <img src={two} />
-            <h4 className="text-2xl font-bold text-slate-100 ml-2">
-              Преглед от администратор & подкрепа
-            </h4>
-          </div>
-          <p className="mb-4">
-            Администратор на платформата ще прегледа кампанията ви и ще ви
-            помогне да я подготвите по най-добрия начин.
-          </p>
-        </div>
-        <div className="px-4 py-8 bg-[#40C783] rounded-2xl w-60 mb-40 h-fit">
-          <div className="flex pb-6">
-            <img src={three} />
-            <h4 className="text-2xl font-bold text-slate-100 ml-2">
-              Споделете & дайте старт
-            </h4>
-          </div>
-          <p className="mb-4">
-            Споделете кампанията на приятелите си и получавайте дарения.
-          </p>
-        </div>
-      </div>
-    </section>
+    </div>
   );
 };
 
