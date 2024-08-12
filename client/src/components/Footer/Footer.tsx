@@ -22,8 +22,8 @@ const FooterSection = ({ title, items }: { title: string, items: string[] }) => 
 
 const Footer = () => {
   const sections = [
-    { title: 'Yes', items: ['Contacts', 'About us', 'Blog'] },
-    { title: 'Campaigns', items: ['Last News', 'Top Campaigns', 'New Campaigns', 'Best Campaigns1'] },
+    { title: 'Useful Information', items: ['Contacts', 'About us', 'Blog'] },
+    { title: 'Campaigns', items: ['Last News', 'Top Campaigns', 'New Campaigns', 'Best Campaigns'] },
     { title: 'Information', items: ['Help Center', 'How it works', 'Taxes', 'Private Info', 'Cookies'] }
   ];
 
@@ -37,20 +37,20 @@ const Footer = () => {
           <h4 className='text-xl font-bold'>Social Media</h4>
           <nav >
             <ul className="flex items-center gap-3">
-              <li className="hover:font-bold cursor-pointer py-2">
-                <img src={facebook} />
+              <li className="hover:font-bold cursor-pointer">
+                <img src={facebook} className="h-9 w-9" />
               </li>
-              <li>
-                <img src={instagram} />
+              <li className="hover:font-bold cursor-pointer">
+                <img src={instagram} className="h-9 w-9" />
               </li>
-              <li>
-                <img src={linkedin} />
+              <li className="hover:font-bold cursor-pointer">
+                <img src={linkedin} className="h-9 w-9" />
               </li>
-              <li>
-                <img src={tiktok} />
+              <li className="hover:font-bold cursor-pointer">
+                <img src={tiktok} className="h-7 w-7" />
               </li>
-              <li>
-                <img src={x} />
+              <li className="hover:font-bold cursor-pointer">
+                <img src={x} className="h-9 w-9" />
               </li>
             </ul>
           </nav>

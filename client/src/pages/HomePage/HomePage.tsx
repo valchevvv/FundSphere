@@ -1,16 +1,11 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import PopularCampaigns from "../Campaigns/PopularCampaigns";
-import LatestCampaigns from "../Campaigns/LatestCampaigns";
-import Campaigns from "../Campaigns";
+import PopularCampaigns from "@/components/PopularCampaigns";
+import LatestCampaigns from "@/components/LatestCampaigns";
 import CreateCampaignDialog from "@/components/CreateCampaignDialog";
 
 import banner from "@/assets/banner.png";
 
 
 const HomePage = () => {
-  const [showAllCampaigns, setShowAllCampaigns] = useState(false);
-
   return (
     <div className="p-6">
       <section className="relative text-center text-white py-16 px-6 rounded-2xl my-5 min-h-[400px] flex items-center justify-center bg-[#40C783]/70">
@@ -32,16 +27,6 @@ const HomePage = () => {
       </section>
       <PopularCampaigns />
       <LatestCampaigns />
-      <div className="text-center">
-        <Button
-          className="px-6 py-3 bg-[#40C783] text-white rounded-lg"
-          onClick={() => setShowAllCampaigns((prevState) => !prevState)}
-        >
-          {showAllCampaigns ? "Hide All Campaigns" : "Explore All Campaigns"}
-        </Button>
-      </div>
-
-      {showAllCampaigns && <Campaigns />}
     </div>
   );
 };

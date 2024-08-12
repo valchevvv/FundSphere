@@ -28,7 +28,7 @@ const Campaign = ({ campaign: campaign }: { campaign: ICampaign }) => {
   };
 
   return (
-    <div className="bg-[#EDEFFC] border rounded-2xl min-w-64 mt-10">
+    <div className="bg-[#EDEFFC] border rounded-2xl min-w-96 mt-10">
       <div>
         <img
           src={

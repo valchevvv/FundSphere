@@ -1,12 +1,13 @@
 import HomePage from "./pages/HomePage";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from "./components/Navbar";
-import Footer from "./pages/Footer";
+import Footer from "./components/Footer";
 import { useContext } from "react";
 import { ContractContext } from "./context/ContractContext";
 import { Button } from "./components/ui/button";
 import { useConnect } from "wagmi";
 import { injected } from 'wagmi/connectors';
+import Campaigns from "./pages/Campaigns";
 
 const App = () => {
   const { connect } = useConnect();
@@ -39,6 +40,7 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/campaigns" element={<Campaigns />} />
       </Routes>
       <Footer />
     </Router>
