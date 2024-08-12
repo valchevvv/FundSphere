@@ -1,6 +1,5 @@
 import Campaign from "@/components/Campaign";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import VerticalScrollWrapper from "@/components/VerticalScrollWrapper";
 import { ContractContext } from "@/context/ContractContext";
 import { useContext } from "react";
 
