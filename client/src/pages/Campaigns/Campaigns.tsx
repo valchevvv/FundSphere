@@ -7,10 +7,12 @@ const Campaigns = () => {
   const { campaigns } = useContext(ContractContext);
 
   return (
-    <section className="p-6">
-      <h2 className="text-2xl font-semibold px-2">All Campaigns</h2>
+    <section className="p-10">
+      <h2 className="text-2xl font-bold w-full flex justify-center">
+        All Campaigns
+      </h2>
       {campaigns.length ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="flex flex-wrap justify-around">
           {campaigns.map((campaign, index) => {
             return <Campaign key={index} campaign={campaign} />;
           })}

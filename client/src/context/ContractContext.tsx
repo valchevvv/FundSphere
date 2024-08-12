@@ -1,7 +1,13 @@
 import { Address } from "viem";
 import { abi as CAMPAIGN_ABI } from "../abi/Campaign.json";
 import { abi as FACTORY_ABI } from "../abi/CampaignFactory.json";
-import { createContext, ReactNode, useEffect, useState, useCallback } from "react";
+import {
+  createContext,
+  ReactNode,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { ethers } from "ethers";
 
 const FACTORY_CONTRACT_ADDRESS = import.meta.env.VITE_WC_FACTORY_CONTRACT_ID;
@@ -12,10 +18,12 @@ export interface ICampaign {
   name: string;
   description: string;
   image: string;
-  targetAmount: number;
-  currentAmount: number;
+  targetAmount: bigint;
+  currentAmount: bigint;
   transactions: number;
   endDate: string;
+  withdrawn: boolean;
+  withdrawnAmount: bigint;
 }
 
 type FACTORY_TYPE = {
@@ -35,6 +43,10 @@ type FACTORY_TYPE = {
     amount: bigint,
     callback: () => void
   ) => void;
+  withdrawFundsFromCampaign: (
+    campaignAddress: Address,
+    callback: () => void
+  ) => void;
   popularCampaigns: () => ICampaign[];
   latestCampaigns: () => ICampaign[];
   isWalletConnected: boolean;
@@ -47,6 +59,7 @@ export const ContractContext = createContext<FACTORY_TYPE>({
   isCreatingCampaign: false,
   addCampaign: () => {},
   fundCampaign: () => {},
+  withdrawFundsFromCampaign: () => {},
   popularCampaigns: () => [],
   latestCampaigns: () => [],
   isWalletConnected: false,
@@ -71,7 +84,9 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
     const checkWalletConnection = async () => {
       if (window.ethereum) {
         try {
-          const accounts = await window.ethereum.request({ method: "eth_accounts" });
+          const accounts = await window.ethereum.request({
+            method: "eth_accounts",
+          });
           setIsWalletConnected(accounts.length > 0);
         } catch (error) {
           console.error("Error checking wallet connection:", error);
@@ -86,96 +101,117 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
     const handleAccountsChanged = (accounts: string[]) => {
       setIsWalletConnected(accounts.length > 0);
     };
-    
+
     const handleNetworkChanged = () => {
       checkWalletConnection();
     };
 
     if (window.ethereum) {
-      window.ethereum.on('accountsChanged', handleAccountsChanged);
-      window.ethereum.on('chainChanged', handleNetworkChanged);
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
+      window.ethereum.on("chainChanged", handleNetworkChanged);
     }
 
     return () => {
       if (window.ethereum) {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        window.ethereum.removeListener('chainChanged', handleNetworkChanged);
+        window.ethereum.removeListener(
+          "accountsChanged",
+          handleAccountsChanged
+        );
+        window.ethereum.removeListener("chainChanged", handleNetworkChanged);
       }
     };
   }, [provider]);
 
-  const getContract = useCallback(async (address: Address, abi: ethers.InterfaceAbi) => {
-    if (!provider) throw new Error("Provider not available");
-    const signer = await provider.getSigner();
-    return new ethers.Contract(address, abi, signer);
-  }, [provider]);
-
-  const addCampaign = useCallback(async (
-    name: string,
-    description: string,
-    image: string,
-    targetAmount: number,
-    endDate: string,
-    callback: () => void
-  ) => {
-    if (!provider) return;
-    setIsCreatingCampaign(true);
-    try {
-      const FactoryContract = await getContract(FACTORY_CONTRACT_ADDRESS, FACTORY_ABI);
-      await FactoryContract.addCampaign(
-        name,
-        description,
-        image,
-        ethers.parseEther(targetAmount.toString()),
-        endDate
-      );
-      await getCampaigns();
-    } catch (error) {
-      console.error("Error adding campaign:", error);
-    } finally {
-      setIsCreatingCampaign(false);
-      callback();
-    }
-  }, [provider, getContract]);
-
-  const fundCampaign = useCallback(async (
-    campaignId: Address,
-    amount: bigint,
-    callback: () => void
-  ) => {
-    if (!provider) return;
-    try {
+  const getContract = useCallback(
+    async (address: Address, abi: ethers.InterfaceAbi) => {
+      if (!provider) throw new Error("Provider not available");
       const signer = await provider.getSigner();
-      const tx = await signer.sendTransaction({ to: campaignId, value: amount });
-      await tx.wait();
-      await getCampaigns();
-    } catch (error) {
-      console.error("Error funding campaign:", error);
-    } finally {
-      callback();
-    }
-  }, [provider, getContract]);
+      return new ethers.Contract(address, abi, signer);
+    },
+    [provider]
+  );
+
+  const addCampaign = useCallback(
+    async (
+      name: string,
+      description: string,
+      image: string,
+      targetAmount: number,
+      endDate: string,
+      callback: () => void
+    ) => {
+      if (!provider) return;
+      setIsCreatingCampaign(true);
+      try {
+        const FactoryContract = await getContract(
+          FACTORY_CONTRACT_ADDRESS,
+          FACTORY_ABI
+        );
+        await FactoryContract.addCampaign(
+          name,
+          description,
+          image,
+          ethers.parseEther(targetAmount.toString()),
+          endDate
+        );
+        await getCampaigns();
+      } catch (error) {
+        console.error("Error adding campaign:", error);
+      } finally {
+        setIsCreatingCampaign(false);
+        callback();
+      }
+    },
+    [provider, getContract]
+  );
+
+  const fundCampaign = useCallback(
+    async (campaignId: Address, amount: bigint, callback: () => void) => {
+      if (!provider) return;
+      try {
+        const signer = await provider.getSigner();
+        const tx = await signer.sendTransaction({
+          to: campaignId,
+          value: amount,
+        });
+        await tx.wait();
+        await getCampaigns();
+      } catch (error) {
+        console.error("Error funding campaign:", error);
+      } finally {
+        callback();
+      }
+    },
+    [provider, getContract]
+  );
 
   const getCampaigns = useCallback(async () => {
     if (!provider) return;
     setIsLoadingCampaigns(true);
     try {
-      const FactoryContract = await getContract(FACTORY_CONTRACT_ADDRESS, FACTORY_ABI);
+      const FactoryContract = await getContract(
+        FACTORY_CONTRACT_ADDRESS,
+        FACTORY_ABI
+      );
       const campaignAddresses = await FactoryContract.getCampaigns();
-      const campaignsData: ICampaign[] = await Promise.all(campaignAddresses.map(async (address: Address) => {
-        const CampaignContract = await getContract(address, CAMPAIGN_ABI);
-        return {
-          address,
-          owner: await CampaignContract.owner(),
-          name: await CampaignContract.name(),
-          description: await CampaignContract.description(),
-          image: await CampaignContract.image(),
-          targetAmount: Number(await CampaignContract.targetAmount()),
-          currentAmount: Number(await CampaignContract.currentAmount()),
-          transactions: Number(await CampaignContract.transactions()),
-          endDate: await CampaignContract.endDate(),
-        };
-      }));
+      const campaignsData: ICampaign[] = await Promise.all(
+        campaignAddresses.map(async (address: Address) => {
+          const CampaignContract = await getContract(address, CAMPAIGN_ABI);
+          return {
+            address,
+            owner: await CampaignContract.owner(),
+            name: await CampaignContract.name(),
+            description: await CampaignContract.description(),
+            image: await CampaignContract.image(),
+            targetAmount: Number(await CampaignContract.targetAmount()),
+            currentAmount: Number(await CampaignContract.currentAmount()),
+            transactions: Number(await CampaignContract.transactions()),
+            endDate: await CampaignContract.endDate(),
+            withdrawn: await CampaignContract.withdrawn(),
+            withdrawnAmount: Number(await CampaignContract.withdrawnAmount()),
+          };
+        })
+      );
       setCampaigns(campaignsData);
     } catch (error) {
       console.error("Error fetching campaigns:", error);
@@ -184,13 +220,22 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [provider, getContract]);
 
-  const getPopularCampaigns = useCallback(() => 
-    [...campaigns].sort((a, b) => b.transactions - a.transactions).slice(0, 5),
+  const getPopularCampaigns = useCallback(
+    () =>
+      [...campaigns]
+        .sort((a, b) => b.transactions - a.transactions)
+        .slice(0, 5),
     [campaigns]
   );
 
-  const getLatestCampaigns = useCallback(() => 
-    [...campaigns].sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime()).slice(0, 5),
+  const getLatestCampaigns = useCallback(
+    () =>
+      [...campaigns]
+        .sort(
+          (a, b) =>
+            new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
+        )
+        .slice(0, 5),
     [campaigns]
   );
 
@@ -200,6 +245,86 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [provider, getCampaigns]);
 
+  const addNewCampaign = (newCampaign: ICampaign) => {
+    setCampaigns((prevCampaigns) => [...prevCampaigns, newCampaign]);
+  };
+
+  useEffect(() => {
+    if (provider) {
+      const listenForCampaignCreated = async () => {
+        const FactoryContract = await getContract(
+          FACTORY_CONTRACT_ADDRESS,
+          FACTORY_ABI
+        );
+        FactoryContract.on(
+          "CampaignCreated",
+          async (
+            campaignAddress,
+            owner,
+            name,
+            description,
+            image,
+            targetAmount,
+            endDate
+          ) => {
+            const newCampaign: ICampaign = {
+              address: campaignAddress,
+              owner: owner,
+              name: name,
+              description: description,
+              image: image,
+              targetAmount: BigInt(targetAmount),
+              currentAmount: BigInt(0),
+              transactions: 0,
+              endDate: endDate,
+              withdrawn: false,
+              withdrawnAmount: BigInt(0),
+            };
+            console.log("New campaign created:", newCampaign);
+            addNewCampaign(newCampaign);
+          }
+        );
+      };
+
+      const listenForFundsWithdrawn = async () => {
+        const FactoryContract = await getContract(
+          FACTORY_CONTRACT_ADDRESS,
+          FACTORY_ABI
+        );
+        FactoryContract.on(
+          "FundsWithdrawn",
+          async (campaignAddress, owner, amount) => {
+            console.log("Funds withdrawn from campaign:", campaignAddress);
+            await getCampaigns(); // Update campaigns after withdrawal
+          }
+        );
+      };
+
+      listenForCampaignCreated();
+      listenForFundsWithdrawn();
+    }
+  }, [provider, getContract]);
+
+  const withdrawFundsFromCampaign = useCallback(
+    async (campaignAddress: Address, callback: () => void) => {
+      if (!provider) return;
+      try {
+        const CampaignContract = await getContract(
+          campaignAddress,
+          CAMPAIGN_ABI
+        );
+        const tx = await CampaignContract.withdraw();
+        await tx.wait();
+        await getCampaigns(); // Update campaigns after withdrawal
+      } catch (error) {
+        console.error("Error withdrawing funds:", error);
+      } finally {
+        callback();
+      }
+    },
+    [provider, getContract]
+  );
+
   return (
     <ContractContext.Provider
       value={{
@@ -208,6 +333,7 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         isCreatingCampaign,
         addCampaign,
         fundCampaign,
+        withdrawFundsFromCampaign,
         popularCampaigns: getPopularCampaigns,
         latestCampaigns: getLatestCampaigns,
         isWalletConnected,

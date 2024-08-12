@@ -30,10 +30,14 @@ export interface CampaignFactoryInterface extends Interface {
       | "campaigns"
       | "donateToCampaign"
       | "getCampaigns"
+      | "withdrawFromCampaign"
   ): FunctionFragment;
 
   getEvent(
-    nameOrSignatureOrTopic: "CampaignCreated" | "DonationMade"
+    nameOrSignatureOrTopic:
+      | "CampaignCreated"
+      | "DonationMade"
+      | "FundsWithdrawn"
   ): EventFragment;
 
   encodeFunctionData(
@@ -52,6 +56,10 @@ export interface CampaignFactoryInterface extends Interface {
     functionFragment: "getCampaigns",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawFromCampaign",
+    values: [BigNumberish]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "addCampaign",
@@ -66,6 +74,10 @@ export interface CampaignFactoryInterface extends Interface {
     functionFragment: "getCampaigns",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawFromCampaign",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace CampaignCreatedEvent {
@@ -73,6 +85,8 @@ export namespace CampaignCreatedEvent {
     campaignAddress: AddressLike,
     owner: AddressLike,
     name: string,
+    description: string,
+    image: string,
     targetAmount: BigNumberish,
     endDate: string
   ];
@@ -80,6 +94,8 @@ export namespace CampaignCreatedEvent {
     campaignAddress: string,
     owner: string,
     name: string,
+    description: string,
+    image: string,
     targetAmount: bigint,
     endDate: string
   ];
@@ -87,6 +103,8 @@ export namespace CampaignCreatedEvent {
     campaignAddress: string;
     owner: string;
     name: string;
+    description: string;
+    image: string;
     targetAmount: bigint;
     endDate: string;
   }
@@ -110,6 +128,28 @@ export namespace DonationMadeEvent {
   export interface OutputObject {
     campaignAddress: string;
     donor: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace FundsWithdrawnEvent {
+  export type InputTuple = [
+    campaignAddress: AddressLike,
+    owner: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [
+    campaignAddress: string,
+    owner: string,
+    amount: bigint
+  ];
+  export interface OutputObject {
+    campaignAddress: string;
+    owner: string;
     amount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
@@ -183,6 +223,12 @@ export interface CampaignFactory extends BaseContract {
 
   getCampaigns: TypedContractMethod<[], [string[]], "view">;
 
+  withdrawFromCampaign: TypedContractMethod<
+    [index: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -209,6 +255,9 @@ export interface CampaignFactory extends BaseContract {
   getFunction(
     nameOrSignature: "getCampaigns"
   ): TypedContractMethod<[], [string[]], "view">;
+  getFunction(
+    nameOrSignature: "withdrawFromCampaign"
+  ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
 
   getEvent(
     key: "CampaignCreated"
@@ -224,9 +273,16 @@ export interface CampaignFactory extends BaseContract {
     DonationMadeEvent.OutputTuple,
     DonationMadeEvent.OutputObject
   >;
+  getEvent(
+    key: "FundsWithdrawn"
+  ): TypedContractEvent<
+    FundsWithdrawnEvent.InputTuple,
+    FundsWithdrawnEvent.OutputTuple,
+    FundsWithdrawnEvent.OutputObject
+  >;
 
   filters: {
-    "CampaignCreated(address,address,string,int256,string)": TypedContractEvent<
+    "CampaignCreated(address,address,string,string,string,int256,string)": TypedContractEvent<
       CampaignCreatedEvent.InputTuple,
       CampaignCreatedEvent.OutputTuple,
       CampaignCreatedEvent.OutputObject
@@ -246,6 +302,17 @@ export interface CampaignFactory extends BaseContract {
       DonationMadeEvent.InputTuple,
       DonationMadeEvent.OutputTuple,
       DonationMadeEvent.OutputObject
+    >;
+
+    "FundsWithdrawn(address,address,uint256)": TypedContractEvent<
+      FundsWithdrawnEvent.InputTuple,
+      FundsWithdrawnEvent.OutputTuple,
+      FundsWithdrawnEvent.OutputObject
+    >;
+    FundsWithdrawn: TypedContractEvent<
+      FundsWithdrawnEvent.InputTuple,
+      FundsWithdrawnEvent.OutputTuple,
+      FundsWithdrawnEvent.OutputObject
     >;
   };
 }

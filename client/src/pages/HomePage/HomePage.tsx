@@ -1,9 +1,7 @@
 import PopularCampaigns from "@/components/PopularCampaigns";
 import LatestCampaigns from "@/components/LatestCampaigns";
-import CreateCampaignDialog from "@/components/CreateCampaignDialog";
 
 import banner from "@/assets/banner.png";
-
 
 const HomePage = () => {
   return (
@@ -22,7 +20,6 @@ const HomePage = () => {
             Join our community in making a difference. Explore and support the
             campaigns that matter to you.
           </p>
-          <CreateCampaignDialog />
         </div>
       </section>
       <PopularCampaigns />

@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\Daniel\\Documents\\FundSphere\\contracts\\contracts\\Campaign.sol": {
-      "lastModificationDate": 1723212542775,
-      "contentHash": "a007aabab5bb013efa566f7cac25e9a5",
+      "lastModificationDate": 1723480540937,
+      "contentHash": "b32b2d7d3a57e85b9038e54b494963a1",
       "sourceName": "contracts/Campaign.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -38,8 +38,8 @@
       ]
     },
     "C:\\Users\\Daniel\\Documents\\FundSphere\\contracts\\contracts\\CampaignFactory.sol": {
-      "lastModificationDate": 1723212542775,
-      "contentHash": "0776817fd14776835f53e0a437fbce2e",
+      "lastModificationDate": 1723479903901,
+      "contentHash": "20c1a41a33a2bf8325577feb6f2d1eea",
       "sourceName": "contracts/CampaignFactory.sol",
       "solcConfig": {
         "version": "0.8.24",

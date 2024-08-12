@@ -35,9 +35,14 @@ export interface CampaignInterface extends Interface {
       | "owner"
       | "targetAmount"
       | "transactions"
+      | "withdraw"
+      | "withdrawn"
+      | "withdrawnAmount"
   ): FunctionFragment;
 
-  getEvent(nameOrSignatureOrTopic: "DonationReceived"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "DonationReceived" | "Withdraw"
+  ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "currentAmount",
@@ -58,6 +63,12 @@ export interface CampaignInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transactions",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
+  encodeFunctionData(functionFragment: "withdrawn", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "withdrawnAmount",
     values?: undefined
   ): string;
 
@@ -82,6 +93,12 @@ export interface CampaignInterface extends Interface {
     functionFragment: "transactions",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "withdrawn", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawnAmount",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace DonationReceivedEvent {
@@ -89,6 +106,19 @@ export namespace DonationReceivedEvent {
   export type OutputTuple = [donor: string, amount: bigint];
   export interface OutputObject {
     donor: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace WithdrawEvent {
+  export type InputTuple = [owner: AddressLike, amount: BigNumberish];
+  export type OutputTuple = [owner: string, amount: bigint];
+  export interface OutputObject {
+    owner: string;
     amount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
@@ -158,6 +188,12 @@ export interface Campaign extends BaseContract {
 
   transactions: TypedContractMethod<[], [bigint], "view">;
 
+  withdraw: TypedContractMethod<[], [bigint], "nonpayable">;
+
+  withdrawn: TypedContractMethod<[], [boolean], "view">;
+
+  withdrawnAmount: TypedContractMethod<[], [bigint], "view">;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -189,6 +225,15 @@ export interface Campaign extends BaseContract {
   getFunction(
     nameOrSignature: "transactions"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "withdraw"
+  ): TypedContractMethod<[], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "withdrawn"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "withdrawnAmount"
+  ): TypedContractMethod<[], [bigint], "view">;
 
   getEvent(
     key: "DonationReceived"
@@ -196,6 +241,13 @@ export interface Campaign extends BaseContract {
     DonationReceivedEvent.InputTuple,
     DonationReceivedEvent.OutputTuple,
     DonationReceivedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Withdraw"
+  ): TypedContractEvent<
+    WithdrawEvent.InputTuple,
+    WithdrawEvent.OutputTuple,
+    WithdrawEvent.OutputObject
   >;
 
   filters: {
@@ -208,6 +260,17 @@ export interface Campaign extends BaseContract {
       DonationReceivedEvent.InputTuple,
       DonationReceivedEvent.OutputTuple,
       DonationReceivedEvent.OutputObject
+    >;
+
+    "Withdraw(address,uint256)": TypedContractEvent<
+      WithdrawEvent.InputTuple,
+      WithdrawEvent.OutputTuple,
+      WithdrawEvent.OutputObject
+    >;
+    Withdraw: TypedContractEvent<
+      WithdrawEvent.InputTuple,
+      WithdrawEvent.OutputTuple,
+      WithdrawEvent.OutputObject
     >;
   };
 }
