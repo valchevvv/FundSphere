@@ -1,7 +1,7 @@
 import { Address } from "viem";
 import { abi as CAMPAIGN_ABI } from "../abi/Campaign.json";
 import { abi as FACTORY_ABI } from "../abi/CampaignFactory.json";
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, ReactNode, useEffect, useState, useCallback } from "react";
 import { ethers } from "ethers";
 
 const FACTORY_CONTRACT_ADDRESS = import.meta.env.VITE_WC_FACTORY_CONTRACT_ID;
@@ -37,23 +37,80 @@ type FACTORY_TYPE = {
   ) => void;
   popularCampaigns: () => ICampaign[];
   latestCampaigns: () => ICampaign[];
+  isWalletConnected: boolean;
+  isProviderAvailable: boolean;
 };
 
-export const ContractContext = createContext({} as FACTORY_TYPE);
+export const ContractContext = createContext<FACTORY_TYPE>({
+  campaigns: [],
+  isLoadingCampaigns: false,
+  isCreatingCampaign: false,
+  addCampaign: () => {},
+  fundCampaign: () => {},
+  popularCampaigns: () => [],
+  latestCampaigns: () => [],
+  isWalletConnected: false,
+  isProviderAvailable: false,
+});
 
 export const ContractProvider = ({ children }: { children: ReactNode }) => {
   const [campaigns, setCampaigns] = useState<ICampaign[]>([]);
-  const [isLoadingCampaigns, setIsLoadingCampaigns] = useState<boolean>(false);
-  const [isCreatingCampaign, setIsCreatingCampaign] = useState<boolean>(false);
+  const [isLoadingCampaigns, setIsLoadingCampaigns] = useState(false);
+  const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
 
-  const provider = new ethers.BrowserProvider(window.ethereum);
+  useEffect(() => {
+    if (window.ethereum) {
+      const newProvider = new ethers.BrowserProvider(window.ethereum);
+      setProvider(newProvider);
+    }
+  }, []);
 
-  const getContract = async (address: Address, abi: ethers.InterfaceAbi) => {
+  useEffect(() => {
+    const checkWalletConnection = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: "eth_accounts" });
+          setIsWalletConnected(accounts.length > 0);
+        } catch (error) {
+          console.error("Error checking wallet connection:", error);
+        }
+      } else {
+        setIsWalletConnected(false);
+      }
+    };
+
+    checkWalletConnection();
+
+    const handleAccountsChanged = (accounts: string[]) => {
+      setIsWalletConnected(accounts.length > 0);
+    };
+    
+    const handleNetworkChanged = () => {
+      checkWalletConnection();
+    };
+
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('chainChanged', handleNetworkChanged);
+    }
+
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener('chainChanged', handleNetworkChanged);
+      }
+    };
+  }, [provider]);
+
+  const getContract = useCallback(async (address: Address, abi: ethers.InterfaceAbi) => {
+    if (!provider) throw new Error("Provider not available");
     const signer = await provider.getSigner();
     return new ethers.Contract(address, abi, signer);
-  };
+  }, [provider]);
 
-  const addCampaign = async (
+  const addCampaign = useCallback(async (
     name: string,
     description: string,
     image: string,
@@ -61,13 +118,10 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
     endDate: string,
     callback: () => void
   ) => {
+    if (!provider) return;
     setIsCreatingCampaign(true);
     try {
-      const FactoryContract = await getContract(
-        FACTORY_CONTRACT_ADDRESS,
-        FACTORY_ABI
-      );
-
+      const FactoryContract = await getContract(FACTORY_CONTRACT_ADDRESS, FACTORY_ABI);
       await FactoryContract.addCampaign(
         name,
         description,
@@ -75,110 +129,89 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         ethers.parseEther(targetAmount.toString()),
         endDate
       );
+      await getCampaigns();
     } catch (error) {
-      console.error(error);
+      console.error("Error adding campaign:", error);
     } finally {
-      callback();
-      getCampaigns();
       setIsCreatingCampaign(false);
+      callback();
     }
-  };
+  }, [provider, getContract]);
 
-  const fundCampaign = async (
+  const fundCampaign = useCallback(async (
     campaignId: Address,
     amount: bigint,
     callback: () => void
   ) => {
+    if (!provider) return;
     try {
       const signer = await provider.getSigner();
-      const transaction = {
-        to: campaignId,
-        value: amount,
-      };
-
-      const tx = await signer.sendTransaction(transaction);
+      const tx = await signer.sendTransaction({ to: campaignId, value: amount });
       await tx.wait();
-      getCampaigns();
+      await getCampaigns();
     } catch (error) {
-      console.error("Error funding quiz", error);
+      console.error("Error funding campaign:", error);
     } finally {
       callback();
     }
-  };
+  }, [provider, getContract]);
 
-  const getCampaigns = async () => {
+  const getCampaigns = useCallback(async () => {
+    if (!provider) return;
+    setIsLoadingCampaigns(true);
     try {
-      setIsLoadingCampaigns(true);
-      const FactoryContract = await getContract(
-        FACTORY_CONTRACT_ADDRESS,
-        FACTORY_ABI
-      );
-      const campaigns = await FactoryContract.getCampaigns();
-
-      let campaigns_data: ICampaign[] = [];
-
-      for (const campaign_address of campaigns) {
-        const CampaignContract = await getContract(
-          campaign_address,
-          CAMPAIGN_ABI
-        );
-        const owner = await CampaignContract.owner();
-        const name = await CampaignContract.name();
-        const description = await CampaignContract.description();
-        const image = await CampaignContract.image();
-        const targetAmount = await CampaignContract.targetAmount();
-        const currentAmount = await CampaignContract.currentAmount();
-        const transactions = await CampaignContract.transactions();
-        const endDate = await CampaignContract.endDate();
-
-        campaigns_data.push({
-          address: campaign_address,
-          owner,
-          name,
-          description,
-          image,
-          targetAmount: Number(targetAmount),
-          currentAmount: Number(currentAmount),
-          transactions: Number(transactions),
-          endDate,
-        });
-      }
-
-      setCampaigns(campaigns_data);
+      const FactoryContract = await getContract(FACTORY_CONTRACT_ADDRESS, FACTORY_ABI);
+      const campaignAddresses = await FactoryContract.getCampaigns();
+      const campaignsData: ICampaign[] = await Promise.all(campaignAddresses.map(async (address: Address) => {
+        const CampaignContract = await getContract(address, CAMPAIGN_ABI);
+        return {
+          address,
+          owner: await CampaignContract.owner(),
+          name: await CampaignContract.name(),
+          description: await CampaignContract.description(),
+          image: await CampaignContract.image(),
+          targetAmount: Number(await CampaignContract.targetAmount()),
+          currentAmount: Number(await CampaignContract.currentAmount()),
+          transactions: Number(await CampaignContract.transactions()),
+          endDate: await CampaignContract.endDate(),
+        };
+      }));
+      setCampaigns(campaignsData);
     } catch (error) {
+      console.error("Error fetching campaigns:", error);
     } finally {
       setIsLoadingCampaigns(false);
     }
-  };
+  }, [provider, getContract]);
 
-  const getPopularCampaigns = () => {
-    return [...campaigns]
-      .sort((a, b) => b.transactions - a.transactions)
-      .slice(0, 5);
-  };
+  const getPopularCampaigns = useCallback(() => 
+    [...campaigns].sort((a, b) => b.transactions - a.transactions).slice(0, 5),
+    [campaigns]
+  );
 
-  const getLatestCampaigns = () => {
-    return [...campaigns]
-      .sort(
-        (a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
-      )
-      .slice(0, 5);
-  };
+  const getLatestCampaigns = useCallback(() => 
+    [...campaigns].sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime()).slice(0, 5),
+    [campaigns]
+  );
 
   useEffect(() => {
-    getCampaigns();
-  }, []);
+    if (provider) {
+      getCampaigns();
+    }
+  }, [provider, getCampaigns]);
 
   return (
     <ContractContext.Provider
       value={{
         campaigns,
-        isLoadingCampaigns: isLoadingCampaigns,
-        isCreatingCampaign: isCreatingCampaign,
-        addCampaign: addCampaign,
-        fundCampaign: fundCampaign,
+        isLoadingCampaigns,
+        isCreatingCampaign,
+        addCampaign,
+        fundCampaign,
         popularCampaigns: getPopularCampaigns,
         latestCampaigns: getLatestCampaigns,
+        isWalletConnected,
+        isProviderAvailable: !!provider,
       }}
     >
       {children}
