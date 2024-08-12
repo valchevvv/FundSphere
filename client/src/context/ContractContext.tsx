@@ -298,13 +298,9 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
           FACTORY_CONTRACT_ADDRESS,
           FACTORY_ABI
         );
-        FactoryContract.on(
-          "FundsWithdrawn",
-          async (campaignAddress, owner, amount) => {
-            console.log("Funds withdrawn from campaign:", campaignAddress);
-            await getCampaigns(); // Update campaigns after withdrawal
-          }
-        );
+        FactoryContract.on("FundsWithdrawn", async () => {
+          await getCampaigns();
+        });
       };
 
       listenForCampaignCreated();
