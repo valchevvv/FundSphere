@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ContractContext, ICampaign } from "@/context/ContractContext";
-import { ReactElement, ReactEventHandler, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 
 const CreateCampaignDialog = () => {

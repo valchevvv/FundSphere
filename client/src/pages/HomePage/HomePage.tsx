@@ -1,26 +1,18 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import one from "@/assets/1.svg";
-import two from "@/assets/2.svg";
-import three from "@/assets/3.svg";
-import VerticalScrollWrapper from "@/components/VerticalScrollWrapper";
-
-import banner from "@/assets/banner.png";
-
-import { useAccount } from "wagmi";
 import PopularCampaigns from "../Campaigns/PopularCampaigns";
 import LatestCampaigns from "../Campaigns/LatestCampaigns";
-import { useState } from "react";
 import Campaigns from "../Campaigns";
 import CreateCampaignDialog from "@/components/CreateCampaignDialog";
 
-// Import a background image
+import banner from "@/assets/banner.png";
+
 
 const HomePage = () => {
   const [showAllCampaigns, setShowAllCampaigns] = useState(false);
 
   return (
     <div className="p-6">
-      {/* Welcome Section */}
       <section className="relative text-center text-white py-16 px-6 rounded-2xl my-5 min-h-[400px] flex items-center justify-center bg-[#40C783]/70">
         <img
           src={banner}
@@ -38,12 +30,8 @@ const HomePage = () => {
           <CreateCampaignDialog />
         </div>
       </section>
-
-      {/* Popular Campaigns Section */}
       <PopularCampaigns />
       <LatestCampaigns />
-
-      {/* Explore All Campaigns Button */}
       <div className="text-center">
         <Button
           className="px-6 py-3 bg-[#40C783] text-white rounded-lg"

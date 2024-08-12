@@ -16,7 +16,7 @@ const VerticalScrollWrapper = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    handleScroll(); // Check scroll position on mount
+    handleScroll();
     scrollRef.current?.addEventListener("scroll", handleScroll);
     return () => scrollRef.current?.removeEventListener("scroll", handleScroll);
   }, []);
@@ -38,7 +38,7 @@ const VerticalScrollWrapper = ({ children }: { children: ReactNode }) => {
       {canScrollLeft && (
         <div
           className="absolute left-0 top-0 bottom-0 h-full flex items-center justify-center"
-          style={{ width: "120px" }} // Wider shadow container
+          style={{ width: "120px" }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-gray-200 to-transparent rounded-2xl" />
           <button
@@ -60,7 +60,7 @@ const VerticalScrollWrapper = ({ children }: { children: ReactNode }) => {
       {canScrollRight && (
         <div
           className="absolute right-0 top-0 bottom-0 h-full flex items-center justify-center"
-          style={{ width: "120px" }} // Wider shadow container
+          style={{ width: "120px" }}
         >
           <div className="absolute inset-0 bg-gradient-to-l from-gray-200 to-transparent rounded-2xl" />
           <button
