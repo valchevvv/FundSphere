@@ -46,7 +46,7 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
   const [isLoadingCampaigns, setIsLoadingCampaigns] = useState<boolean>(false);
   const [isCreatingCampaign, setIsCreatingCampaign] = useState<boolean>(false);
 
-  const provider = new ethers.BrowserProvider((window as any).ethereum);
+  const provider = new ethers.BrowserProvider(window.ethereum);
 
   const getContract = async (address: Address, abi: ethers.InterfaceAbi) => {
     const signer = await provider.getSigner();
