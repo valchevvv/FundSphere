@@ -158,8 +158,15 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         console.error("Error adding campaign:", error);
       } finally {
-        setIsCreatingCampaign(false);
-        callback();
+        const FactoryContract = await getContract(
+          FACTORY_CONTRACT_ADDRESS,
+          FACTORY_ABI
+        );
+        FactoryContract.on("CampaignCreated", async () => {
+          setIsCreatingCampaign(false);
+          callback();
+          FactoryContract.off("CampaignCreated", async () => {});
+        });
       }
     },
     [provider, getContract]

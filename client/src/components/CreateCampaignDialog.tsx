@@ -14,6 +14,17 @@ import { ContractContext, ICampaign } from "@/context/ContractContext";
 import { useContext, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 
+// Conversion functions
+const bigintToNumber = (bigintValue: bigint): number => {
+  const precision = 18; // Define your precision
+  return Number(bigintValue) / 10 ** precision;
+};
+
+const numberToBigInt = (numberValue: number): bigint => {
+  const precision = 18; // Define your precision
+  return BigInt(Math.round(numberValue * 10 ** precision));
+};
+
 const CreateCampaignDialog = () => {
   const { addCampaign, isCreatingCampaign } = useContext(ContractContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -21,16 +32,27 @@ const CreateCampaignDialog = () => {
   const [newCampaignData, setNewCampaignData] = useState<Partial<ICampaign>>({
     name: "",
     description: "",
-    targetAmount: 0,
+    targetAmount: 0n, // Default to 0n
     image: "",
-    endDate: Date.now.toString(),
+    endDate: new Date().toISOString().split("T")[0], // Default to today's date
   });
 
-  const changeHandler = (e: any): void => {
-    setNewCampaignData({
-      ...newCampaignData,
-      [e.target.id]: e.target.value,
-    });
+  const changeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { id, value } = e.target;
+
+    if (id === "targetAmount") {
+      const numericValue = parseFloat(value);
+      const targetAmountBigInt = numberToBigInt(numericValue);
+      setNewCampaignData((prevData) => ({
+        ...prevData,
+        targetAmount: targetAmountBigInt,
+      }));
+    } else {
+      setNewCampaignData((prevData) => ({
+        ...prevData,
+        [id]: value,
+      }));
+    }
   };
 
   const dialogShow = (open?: boolean) => {
@@ -38,9 +60,9 @@ const CreateCampaignDialog = () => {
     setNewCampaignData({
       name: "",
       description: "",
-      targetAmount: 0,
+      targetAmount: 0n, // Reset to bigint
       image: "",
-      endDate: Date.now.toString(),
+      endDate: new Date().toISOString().split("T")[0], // Default to today's date
     });
   };
 
@@ -52,13 +74,21 @@ const CreateCampaignDialog = () => {
       !newCampaignData.endDate
     )
       return;
+
+    // Convert bigint to number for the API call
+    const targetAmountNumber = bigintToNumber(
+      newCampaignData.targetAmount || 0n
+    );
+
     addCampaign(
       newCampaignData.name,
       newCampaignData.description,
       newCampaignData.image || "",
-      newCampaignData.targetAmount,
+      targetAmountNumber, // Convert to number
       newCampaignData.endDate,
-      dialogShow
+      () => {
+        dialogShow(false); // Close the dialog when campaign is added
+      }
     );
   };
 
@@ -83,7 +113,7 @@ const CreateCampaignDialog = () => {
             </Label>
             <Input
               id="name"
-              value={newCampaignData.name}
+              value={newCampaignData.name || ""}
               onChange={changeHandler}
               placeholder="Enter name"
               className="col-span-3"
@@ -95,7 +125,7 @@ const CreateCampaignDialog = () => {
             </Label>
             <Input
               id="description"
-              value={newCampaignData.description}
+              value={newCampaignData.description || ""}
               onChange={changeHandler}
               placeholder="Enter description"
               className="col-span-3"
@@ -110,7 +140,9 @@ const CreateCampaignDialog = () => {
               type="number"
               min={0}
               step={0.0001}
-              value={newCampaignData.targetAmount}
+              value={bigintToNumber(
+                newCampaignData.targetAmount || 0n
+              ).toString()} // Handle undefined
               onChange={changeHandler}
               placeholder="Enter Amount"
               className="col-span-3"
@@ -122,20 +154,20 @@ const CreateCampaignDialog = () => {
             </Label>
             <Input
               id="image"
-              value={newCampaignData.image}
+              value={newCampaignData.image || ""}
               onChange={changeHandler}
               placeholder="Enter Image (URL)"
               className="col-span-3"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="image" className="text-right">
+            <Label htmlFor="endDate" className="text-right">
               End Date
             </Label>
             <Input
               id="endDate"
               type="date"
-              value={newCampaignData.endDate}
+              value={newCampaignData.endDate || ""}
               onChange={changeHandler}
               placeholder="Enter End Date"
               className="col-span-3"
