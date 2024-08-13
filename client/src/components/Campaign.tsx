@@ -66,7 +66,7 @@ const Campaign = ({ campaign }: { campaign: ICampaign }) => {
   };
 
   return (
-    <div className="bg-card shadow-lg rounded-2xl my-10 mx-5 min-w-96">
+    <div className="bg-card shadow-lg rounded-2xl my-10 mx-5 min-w-80">
       <div>
         <img
           src={

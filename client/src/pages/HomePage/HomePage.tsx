@@ -3,9 +3,13 @@ import LatestCampaigns from "@/components/LatestCampaigns";
 
 import banner from "@/assets/banner.png";
 
+import woman from "@/assets/woman.png"
+import customers from "@/assets/happy-customers.jpeg"
+
 const HomePage = () => {
   return (
     <div className="px-12">
+      <div className="flex justify-evenly">
       <section className="relative text-center text-white py-16 px-6 rounded-2xl my-5 min-h-[400px] flex items-center justify-center bg-primary">
         <img
           src={banner}
@@ -22,8 +26,40 @@ const HomePage = () => {
           </p>
         </div>
       </section>
-      <PopularCampaigns />
-      <LatestCampaigns />
+
+      <div className="m-5 p-6 rounded-xl flex justify-end text-background">
+        <div className="flex flex-col justify-end gap-5 p-5"
+          style={{
+            backgroundImage: `url(${woman})`,
+            backgroundSize: "50% auto",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        >
+        <div className="flex justify-between items-start gap-48">
+          <img src={customers} alt="Happy Customers" className="aspect-square object-cover rounded-3xl w-48" />
+          <div className="bg-primary text-foreground p-6 rounded-xl flex flex-col gap-2 text-lg">
+            <div className="flex flex-col">
+              <span>Active campaigns</span>
+              <span className="font-bold">154 421</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-around items-end gap-6">
+          <div className="bg-primary text-foreground p-6 rounded-xl flex flex-col gap-2 text-lg">
+            <span>Funds count</span>
+            <span className="font-bold">154 421</span>
+          </div>
+          <div className="bg-primary text-foreground p-6 rounded-xl flex flex-col gap-2 text-lg mb-5">
+            <span>123 654€</span>
+            <span className="font-bold">Total collected</span>
+          </div>
+        </div>
+        </div>
+      </div>
+      </div>
+        <PopularCampaigns />
+        <LatestCampaigns />
     </div>
   );
 };
