@@ -5,8 +5,13 @@ import banner from "@/assets/banner.png";
 
 import woman from "@/assets/woman.png"
 import customers from "@/assets/happy-customers.jpeg"
+import { useContext } from "react";
+import { ContractContext } from "@/contexts/ContractContext";
 
 const HomePage = () => {
+
+  const { activeCampaigns, fundsCount, totalCollected  } = useContext(ContractContext);
+
   return (
     <div className="px-12">
       <div className="flex justify-evenly">
@@ -41,17 +46,17 @@ const HomePage = () => {
           <div className="bg-primary text-foreground p-6 rounded-xl flex flex-col gap-2 text-lg">
             <div className="flex flex-col">
               <span>Active campaigns</span>
-              <span className="font-bold">154 421</span>
+              <span className="font-bold">{activeCampaigns}</span>
             </div>
           </div>
         </div>
         <div className="flex justify-around items-end gap-6">
           <div className="bg-primary text-foreground p-6 rounded-xl flex flex-col gap-2 text-lg">
             <span>Funds count</span>
-            <span className="font-bold">154 421</span>
+            <span className="font-bold">{fundsCount}</span>
           </div>
           <div className="bg-primary text-foreground p-6 rounded-xl flex flex-col gap-2 text-lg mb-5">
-            <span>123 654€</span>
+            <span>{totalCollected} (ETH)</span>
             <span className="font-bold">Total collected</span>
           </div>
         </div>

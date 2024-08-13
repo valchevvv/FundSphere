@@ -30,6 +30,9 @@ type FACTORY_TYPE = {
   campaigns: ICampaign[];
   isLoadingCampaigns: boolean;
   isCreatingCampaign: boolean;
+  activeCampaigns: number;
+  fundsCount: number;
+  totalCollected: number;
   addCampaign: (
     name: string,
     description: string,
@@ -50,6 +53,9 @@ export const ContractContext = createContext<FACTORY_TYPE>({
   campaigns: [],
   isLoadingCampaigns: false,
   isCreatingCampaign: false,
+  activeCampaigns: 0,
+  fundsCount: 0,
+  totalCollected: 0,
   addCampaign: () => {},
   fundCampaign: () => {},
   withdrawFundsFromCampaign: () => {},
@@ -65,6 +71,30 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
   const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
+
+  // const activeCampaigns = campaigns.filter(campaign => !campaign.withdrawn && !(campaign.currentAmount > campaign.targetAmount) && !(new Date(campaign.endDate) < new Date(Date.now()))).length;
+  // const fundsCount = campaigns.reduce((acc, campaign) => acc + campaign.transactions, 0);
+  
+  const [activeCampaigns, setActiveCampaigns] = useState<number>(0);
+  const [fundsCount, setFundsCount] = useState<number>(0);
+  const [totalCollected, setTotalCollected] = useState<number>(0);
+
+  useEffect(() => {
+    if(campaigns.length <= 0) return;
+
+    setActiveCampaigns(campaigns.filter(campaign => !campaign.withdrawn && !(campaign.currentAmount > campaign.targetAmount) && !(new Date(campaign.endDate) < new Date(Date.now()))).length);
+    setFundsCount(campaigns.reduce((acc, campaign) => acc + campaign.transactions, 0));
+
+    // sum currentAmount or withdrawnAmount if current is 0 and convert eth to eur
+
+    setTotalCollected(campaigns.reduce((acc, campaign) => {
+      if (campaign.currentAmount > 0) {
+        return acc + parseFloat(ethers.formatEther(campaign.currentAmount));
+      } else {
+        return acc + parseFloat(ethers.formatEther(campaign.withdrawnAmount));
+      }
+    }, 0));
+  }, [campaigns]);
 
   const { notifyError } = useNotification();
 
@@ -254,6 +284,9 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         campaigns,
         isLoadingCampaigns,
         isCreatingCampaign,
+        activeCampaigns,
+        fundsCount,
+        totalCollected,
         addCampaign,
         fundCampaign,
         withdrawFundsFromCampaign,
