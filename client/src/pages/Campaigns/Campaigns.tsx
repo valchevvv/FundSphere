@@ -1,6 +1,6 @@
 import Campaign from "@/components/Campaign";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { ContractContext } from "@/context/ContractContext";
+import { ContractContext } from "@/contexts/ContractContext";
 import { useContext } from "react";
 
 const Campaigns = () => {

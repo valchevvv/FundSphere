@@ -4,7 +4,13 @@ import { abi as FACTORY_ABI } from "../abi/CampaignFactory.json";
 import { createContext, ReactNode, useEffect, useState, useCallback } from "react";
 import { ethers } from "ethers";
 
+import { useNotification } from "./NotificationContext";
+
 const FACTORY_CONTRACT_ADDRESS = import.meta.env.VITE_WC_FACTORY_CONTRACT_ID;
+
+function isError(error: unknown): error is Error {
+  return error instanceof Error;
+}
 
 export interface ICampaign {
   address: Address;
@@ -59,6 +65,8 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
   const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
+
+  const { notifyError } = useNotification();
 
   useEffect(() => {
     if (window.ethereum) {
@@ -121,7 +129,7 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
       );
       setCampaigns(campaignsData);
     } catch (error) {
-      console.error("Error fetching campaigns:", error);
+      notifyError("There was an error fetching campaigns.");
     } finally {
       setIsLoadingCampaigns(false);
     }
@@ -150,7 +158,22 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         await tx.wait();
         await getCampaigns();
       } catch (error) {
-        console.error("Error adding campaign:", error);
+        if (isError(error)) {
+          switch (error.code) {
+            case 'USER_REJECTED':
+              notifyError("You have rejected the transaction.");
+              break;
+            case 'ACTION_REJECTED':
+              notifyError("You have rejected the transaction.");
+              break
+            case 'INSUFFICIENT_FUNDS':
+              notifyError("Insufficient funds.");
+              break;
+            default:
+              console.error("Unhandled error code:", error.code);
+              break;
+          }
+        }
       } finally {
         setIsCreatingCampaign(false);
         callback();
@@ -168,7 +191,7 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         await tx.wait();
         await getCampaigns();
       } catch (error) {
-        console.error("Error funding campaign:", error);
+        notifyError("There was an error funding the campaign.");
       } finally {
         callback();
       }
@@ -185,7 +208,7 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         await tx.wait();
         await getCampaigns();
       } catch (error) {
-        console.error("Error withdrawing funds:", error);
+        notifyError("There was an error withdrawing funds from the campaign.");
       } finally {
         callback();
       }

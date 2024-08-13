@@ -1,6 +1,6 @@
 import user from "@/assets/user.svg";
 import { Progress } from "@/components/ui/progress";
-import { ContractContext, ICampaign } from "@/context/ContractContext";
+import { ContractContext, ICampaign } from "@/contexts/ContractContext";
 import { ethers } from "ethers";
 import { Button } from "./ui/button";
 import { useContext, useState } from "react";

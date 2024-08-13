@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { useContext } from "react";
-import { ContractContext } from "./context/ContractContext";
+import { ContractContext } from "./contexts/ContractContext";
 import { Button } from "./components/ui/button";
 import { useConnect } from "wagmi";
 import { injected } from 'wagmi/connectors';

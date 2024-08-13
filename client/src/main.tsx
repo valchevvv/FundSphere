@@ -8,7 +8,8 @@ import App from "./App.tsx";
 import { config } from "./wagmi.ts";
 
 import "./globals.css";
-import ContractProvider from "./context/ContractContext.tsx";
+import ContractProvider from "./contexts/ContractContext.tsx";
+import { NotificationProvider } from "./contexts/NotificationContext.tsx";
 
 globalThis.Buffer = Buffer;
 
@@ -16,12 +17,14 @@ const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <ContractProvider>
-          <App />
-        </ContractProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <NotificationProvider>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <ContractProvider>
+            <App />
+          </ContractProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </NotificationProvider>
   </React.StrictMode>
 );
