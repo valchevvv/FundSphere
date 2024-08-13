@@ -5,27 +5,33 @@ import { ContractContext } from "@/context/ContractContext";
 import { useContext } from "react";
 
 const LatestCampaigns = () => {
-  const { latestCampaigns } = useContext(ContractContext);
+  const { latestCampaigns, isLoadingCampaigns } = useContext(ContractContext);
 
   const campaigns = latestCampaigns();
 
   return (
     <section className="mb-12">
       <h2 className="text-2xl font-semibold px-2">Latest Campaigns</h2>
-      {campaigns.length ? (
-        <VerticalScrollWrapper>
-          <div className="flex space-x-6">
-            {campaigns.map((campaign, index) => {
-              return <Campaign key={index} campaign={campaign} />;
-            })}
+      {!isLoadingCampaigns ?
+        campaigns.length > 0 ?
+          (
+            <VerticalScrollWrapper>
+              <div className="flex space-x-6">
+                {campaigns.map((campaign, index) => {
+                  return <Campaign key={index} campaign={campaign} />;
+                })}
+              </div>
+            </VerticalScrollWrapper>
+          ) :
+          <div className="flex gap-1 items-center p-2 font-semibold text-black/50">
+            <span>No campaigns available</span>
           </div>
-        </VerticalScrollWrapper>
-      ) : (
-        <div className="flex gap-1 items-center p-2">
-          <LoadingSpinner />
-          <span>Loading</span>
-        </div>
-      )}
+        : (
+          <div className="flex gap-1 items-center p-2">
+            <LoadingSpinner />
+            <span>Loading</span>
+          </div>
+        )}
     </section>
   );
 };
