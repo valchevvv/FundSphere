@@ -66,7 +66,7 @@ const CreateCampaignDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="rounded-full px-8 bg-[#4088c7] hover:bg-[#2a5a84] shadow-2xl transition-colors ease-in-out">
+        <Button className="rounded-full px-8 shadow-2xl transition-colors ease-in-out">
           Start Campaign
         </Button>
       </DialogTrigger>
@@ -123,7 +123,7 @@ const CreateCampaignDialog = () => {
         <DialogFooter>
           <Button
             onClick={handleSubmit}
-            className="flex gap-1 items-center"
+            className="flex gap-1 rounded-lg transition-colors ease-in-out"
             disabled={isCreatingCampaign}
           >
             {isCreatingCampaign && <LoadingSpinner />}

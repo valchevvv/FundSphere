@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAccount, useConnect } from "wagmi";
-import { injected } from "wagmi/connectors";
+import { useDisconnect } from "wagmi";
 
 import logo from "@/assets/logo.png";
 import CreateCampaignDialog from "./CreateCampaignDialog";
 
 const Navbar = () => {
   const account = useAccount();
-  const { connect } = useConnect();
+  const { disconnect } = useDisconnect();
 
   return (
-    <header className="pt-6 px-16 pb-4 bg-[#EDEFFC] border-b">
+    <header className="pt-6 px-16 pb-4 bg-card shadow-lg sticky top-0 z-40">
       <div className="flex justify-between items-center">
         <div className="flex gap-3 items-center">
           <Link to="/" className="hover:underline cursor-pointer">
@@ -25,22 +25,8 @@ const Navbar = () => {
           <img src={logo} className="w-9 aspect-square" alt="FundSphere" />
         </Link>
         <div className="flex gap-3 items-center">
-          {account.isConnected ? (
-            <Button
-              disabled={true}
-              className="rounded-full px-8 bg-[#40C783] hover:bg-[#339F69] transition-colors ease-in-out"
-            >
-              Connected
-            </Button>
-          ) : (
-            <Button
-              onClick={() => connect({ connector: injected() })}
-              className="rounded-full px-8 bg-[#40C783] hover:bg-[#339F69] transition-colors ease-in-out"
-            >
-              Connect Wallet
-            </Button>
-          )}
           {account.isConnected && <CreateCampaignDialog />}
+          <Button onClick={() => disconnect()} className="rounded-full px-8 bg-foreground text-background shadow-2xl transition-colors ease-in-out">Disconnect</Button>
         </div>
       </div>
     </header>

@@ -1,9 +1,6 @@
 import facebook from "@/assets/facebook.svg";
 import instagram from "@/assets/instagram.svg";
 import linkedin from '@/assets/linkedin.svg';
-import x from "@/assets/x.svg"
-import tiktok from '@/assets/tiktok.svg';
-
 
 const FooterSection = ({ title, items }: { title: string, items: string[] }) => {
   return (
@@ -28,32 +25,24 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="px-10 py-8 bg-[#EDEFFC] rounded-md">
+    <footer className="px-10 py-8 bg-card rounded-md">
       <div className="flex w-full gap-9">
         {sections.map((section, index) => (
           <FooterSection key={index} title={section.title} items={section.items} />
         ))}
-        <div className="w-60">
+        <div>
           <h4 className='text-xl font-bold'>Social Media</h4>
-          <nav >
-            <ul className="flex items-center gap-3">
-              <li className="hover:font-bold cursor-pointer">
+            <ul className="flex items-center justify-evenly gap-3">
+              <li className="hover:font-bold cursor-pointer bg-white rounded-lg">
                 <img src={facebook} className="h-9 w-9" />
               </li>
-              <li className="hover:font-bold cursor-pointer">
+              <li className="hover:font-bold cursor-pointer bg-white rounded-lg">
                 <img src={instagram} className="h-9 w-9" />
               </li>
-              <li className="hover:font-bold cursor-pointer">
+              <li className="hover:font-bold cursor-pointer bg-white rounded-lg">
                 <img src={linkedin} className="h-9 w-9" />
               </li>
-              <li className="hover:font-bold cursor-pointer">
-                <img src={tiktok} className="h-7 w-7" />
-              </li>
-              <li className="hover:font-bold cursor-pointer">
-                <img src={x} className="h-9 w-9" />
-              </li>
             </ul>
-          </nav>
         </div>
       </div>
     </footer>

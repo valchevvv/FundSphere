@@ -64,7 +64,7 @@ const Campaign = ({ campaign }: { campaign: ICampaign }) => {
   };
 
   return (
-    <div className="bg-[#EDEFFC] border rounded-2xl min-w-96 mt-10">
+    <div className="bg-card border rounded-2xl min-w-96 mt-10">
       <div>
         <img
           src={
@@ -110,7 +110,7 @@ const Campaign = ({ campaign }: { campaign: ICampaign }) => {
           {campaign.withdrawn ? (
             <Button
               disabled
-              className="w-[100%] flex gap-1 rounded-2xl bg-black transition-colors ease-in-out"
+              className="w-[100%] flex gap-1 rounded-2xl bg-secondary transition-colors ease-in-out"
             >
               Withdrawn
             </Button>
@@ -122,12 +122,7 @@ const Campaign = ({ campaign }: { campaign: ICampaign }) => {
                   <Button
                     disabled={isWithdrawing && isFundingCampaign}
                     onClick={withdrawFunds}
-                    className={`w-[100%] flex gap-1 rounded-2xl ${endDatePassed()
-                      ? "bg-black"
-                      : getProgress >= 100
-                        ? "bg-[#40C783] hover:bg-[#339F69]"
-                        : "bg-[#4088c7] hover:bg-[#2a5a84]"
-                      } transition-colors ease-in-out`}
+                    className="w-[100%] flex gap-1 rounded-2xl transition-colors ease-in-out"
                   >
                     {isWithdrawing ? (
                       <LoadingSpinner />
