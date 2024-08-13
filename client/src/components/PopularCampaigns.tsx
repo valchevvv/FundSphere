@@ -11,7 +11,7 @@ const PopularCampaigns = () => {
 
   return (
     <section className="mb-12">
-      <h2 className="text-2xl font-semibold px-2">Latest Campaigns</h2>
+      <h2 className="text-2xl font-semibold px-2">Popular Campaigns</h2>
       {!isLoadingCampaigns ?
         campaigns.length > 0 ?
           (

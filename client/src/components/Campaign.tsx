@@ -6,7 +6,6 @@ import { Button } from "./ui/button";
 import { useContext, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import { useAccount } from "wagmi";
-import { Input } from "./ui/input";
 import NumberButton from "./NumberButton";
 
 const format = (amount: bigint): string => {
