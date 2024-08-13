@@ -5,7 +5,7 @@ import banner from "@/assets/banner.png";
 
 const HomePage = () => {
   return (
-    <div className="p-6">
+    <div className="px-12">
       <section className="relative text-center text-white py-16 px-6 rounded-2xl my-5 min-h-[400px] flex items-center justify-center bg-primary">
         <img
           src={banner}
