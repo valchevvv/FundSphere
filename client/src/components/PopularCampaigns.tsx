@@ -16,7 +16,7 @@ const PopularCampaigns = () => {
         campaigns.length > 0 ?
           (
             <VerticalScrollWrapper>
-              <div className="flex space-x-6">
+              <div className="flex">
                 {campaigns.map((campaign, index) => {
                   return <Campaign key={index} campaign={campaign} />;
                 })}
