@@ -159,6 +159,7 @@ export const ContractProvider = ({ children }: { children: ReactNode }) => {
         await getCampaigns();
       } catch (error) {
         if (isError(error)) {
+          if('code' in error)
           switch (error.code) {
             case 'USER_REJECTED':
               notifyError("You have rejected the transaction.");

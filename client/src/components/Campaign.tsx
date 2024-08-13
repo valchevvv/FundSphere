@@ -6,6 +6,8 @@ import { Button } from "./ui/button";
 import { useContext, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import { useAccount } from "wagmi";
+import { Input } from "./ui/input";
+import NumberButton from "./NumberButton";
 
 const format = (amount: bigint): string => {
   return ethers.formatEther(amount);
@@ -34,6 +36,8 @@ const Campaign = ({ campaign }: { campaign: ICampaign }) => {
 
   const [isWithdrawing, setIsWithdrawing] = useState<boolean>(false);
   const [isFundingCampaign, setIsFundingCampaign] = useState<boolean>(false);
+
+  const [fundingAmount, setFundingAmount] = useState<number>(0.0005);
 
   const { address } = useAccount();
   const { fundCampaign, withdrawFundsFromCampaign } =
@@ -92,7 +96,18 @@ const Campaign = ({ campaign }: { campaign: ICampaign }) => {
             </p>
           </div>
         </div>
-        <div className="flex mt-5 justify-between gap-1">
+        <div className="flex flex-col mt-5 justify-between gap-3 w-[100%]">
+          <NumberButton
+            campaign={campaign}
+            endDatePassed={endDatePassed}
+            getProgress={getProgress}
+            setIsFundingCampaign={setIsFundingCampaign}
+            fundCampaign={fundCampaign}
+            fundingAmount={fundingAmount}
+            setFundingAmount={setFundingAmount}
+            doneFunding={doneFunding}
+            isFundingCampaign={isFundingCampaign}
+          />
           {campaign.withdrawn ? (
             <Button
               disabled
@@ -102,49 +117,18 @@ const Campaign = ({ campaign }: { campaign: ICampaign }) => {
             </Button>
           ) : (
             <>
-              <Button
-                className={`w-[100%] flex gap-1 rounded-2xl ${
-                  endDatePassed()
-                    ? "bg-black"
-                    : getProgress >= 100
-                      ? "bg-[#40C783] hover:bg-[#339F69]"
-                      : "bg-[#4088c7] hover:bg-[#2a5a84]"
-                } transition-colors ease-in-out`}
-                onClick={() => {
-                  setIsFundingCampaign(true);
-                  fundCampaign(
-                    campaign.address,
-                    ethers.parseEther("0.1"),
-                    doneFunding
-                  );
-                }}
-                disabled={
-                  getProgress >= 100 || isFundingCampaign || endDatePassed()
-                }
-              >
-                {isFundingCampaign && <LoadingSpinner />}
-                {endDatePassed() ? (
-                  <span>End date passed</span>
-                ) : isFundingCampaign ? (
-                  <span>Funding</span>
-                ) : getProgress >= 100 ? (
-                  <span>Completed</span>
-                ) : (
-                  <span>Donate (0.0005 ETH)</span>
-                )}
-              </Button>
               {isOwned &&
                 campaign.currentAmount > 0n &&
                 !campaign.withdrawn && (
                   <Button
+                    disabled={isWithdrawing && isFundingCampaign}
                     onClick={withdrawFunds}
-                    className={`w-[100%] flex gap-1 rounded-2xl ${
-                      endDatePassed()
-                        ? "bg-black"
-                        : getProgress >= 100
-                          ? "bg-[#40C783] hover:bg-[#339F69]"
-                          : "bg-[#4088c7] hover:bg-[#2a5a84]"
-                    } transition-colors ease-in-out`}
+                    className={`w-[100%] flex gap-1 rounded-2xl ${endDatePassed()
+                      ? "bg-black"
+                      : getProgress >= 100
+                        ? "bg-[#40C783] hover:bg-[#339F69]"
+                        : "bg-[#4088c7] hover:bg-[#2a5a84]"
+                      } transition-colors ease-in-out`}
                   >
                     {isWithdrawing ? (
                       <LoadingSpinner />
