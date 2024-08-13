@@ -1,4 +1,3 @@
-import user from "@/assets/user.svg";
 import { Progress } from "@/components/ui/progress";
 import { ContractContext, ICampaign } from "@/contexts/ContractContext";
 import { ethers } from "ethers";
@@ -7,6 +6,9 @@ import { useContext, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import { useAccount } from "wagmi";
 import NumberButton from "./NumberButton";
+
+import { GrMoney } from "react-icons/gr";
+
 
 const format = (amount: bigint): string => {
   return ethers.formatEther(amount);
@@ -77,8 +79,9 @@ const Campaign = ({ campaign }: { campaign: ICampaign }) => {
       <div className="p-4">
         <h5 className="text-xl font-bold mb-2">{campaign.name}</h5>
         <p className="mb-4">{campaign.description}</p>
-        <div className="w-full flex mb-2">
-          <img src={user} className="mr-2" /> {campaign.transactions} Donations
+        <div className="w-full flex py-1 gap-2 items-center mb-2">
+          <GrMoney size={20} />
+          {campaign.transactions} Donations
         </div>
         <div>
           <Progress value={getProgress} className="h-2 my-2" />
@@ -120,7 +123,7 @@ const Campaign = ({ campaign }: { campaign: ICampaign }) => {
                 campaign.currentAmount > 0n &&
                 !campaign.withdrawn && (
                   <Button
-                    disabled={isWithdrawing && isFundingCampaign}
+                    disabled={isWithdrawing || isFundingCampaign}
                     onClick={withdrawFunds}
                     className="w-[100%] flex gap-1 rounded-2xl transition-colors ease-in-out"
                   >
